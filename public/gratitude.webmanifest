@@ -1,0 +1,15 @@
+{
+    "background_color": "darkgreen",
+    "description": "Stores things to be grateful for, so you can be reminded later.",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "./icon.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ],
+    "name": "Gratitude Bank",
+    "short_name": "Gratitude",
+    "start_url": "./index.html"
+  }
