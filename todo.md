@@ -12,7 +12,7 @@
     - swipe or tap down to retain, swipe or tap up to release
         - if retain: mark last seen
         - if release: remove from storage
-* Disable Babylon loading screen
+* Interface polish (opening title, font choices, etc.)
 * Write service worker for offline use
 * Build process
     - minify JSON
