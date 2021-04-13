@@ -12,7 +12,14 @@
     - swipe or tap down to retain, swipe or tap up to release
         - if retain: mark last seen
         - if release: remove from storage
+* figure out why position/aspect get screwed up when rotating device
 * Interface polish (opening title, font choices, etc.)
+* Visual pass:
+    - overall lighting, sky, colors
+    - trees and shrubs
+    - rocks around fire
+    - moving light
+    - sparks coming off fire
 * Write service worker for offline use
 * Build process
     - minify JSON
