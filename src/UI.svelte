@@ -22,8 +22,8 @@
 <div class="ui-layer">
     <div class="title">Gratitude</div>
 
-    <!-- {#if $inscriptionRect != null} -->
-    {#if false}
+    {#if $inscriptionRect != null}
+    <!-- {#if false} -->
         <form on:submit|preventDefault={inscribe}>
             <div class="inscription"
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
@@ -49,7 +49,6 @@
         z-index: 30;
 
         pointer-events: none;
-        font-weight: bold;
     }
 
     .title {
@@ -61,6 +60,7 @@
         padding: 5px 10px;
         font-size: 40px;
         letter-spacing: 3.3px;
+        font-weight: bold;
     }
 
     .ui-layer > * {
@@ -81,6 +81,8 @@
     .inscription div {
         width: 100%;
 
+        font-size: 24px;
+
         text-align: center;
     }
 
@@ -89,8 +91,8 @@
         width: 90%;
         margin: 5px 0;
 
+        font-family: inherit;
         font-size: 28px;
-        font-family: monospace;
         text-align: center;
 
         background-color: rgba(0,0,0,0.5);
@@ -104,6 +106,7 @@
         color: white;
         background-color: rgba(0, 17, 68, 0.8);
         font-size: 20px;
+        font-family: inherit;
         border: 2px solid black;
 
         opacity: 1;

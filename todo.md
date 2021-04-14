@@ -1,5 +1,4 @@
 - immediate
-    - take inscription from input, have it appear on log
     - animate next step of log going in fire
 
 * Store procedure:

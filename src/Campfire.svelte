@@ -45,10 +45,11 @@
         Ready = 1,
         Drawing = 2,
         Scribing = 3,
-        Placing = 4,
-        Summoning = 5,
-        Remembering = 6,
-        Dismissing = 7,
+        Reading = 4,
+        Placing = 5,
+        Summoning = 6,
+        Remembering = 7,
+        Dismissing = 8,
     }
     let currentState: State;
 
@@ -86,65 +87,6 @@
                 }
             });
 
-            const ctx = inscriptionTexture.getContext();
-            ctx.fillStyle = inscriptionBaseColor.toHexString();
-            ctx.fillRect(0, 0, inscriptionTextureDimensions.width, inscriptionTextureDimensions.height);
-
-            let inputString = "The way my cat looks embarrassed when she misses a jump";
-            const maxWidth = inscriptionTextureDimensions.width * 0.8;
-            const widthGrace = 200; // canvas will do some squishing automatically,
-                                    // and it can look pretty ok
-            const baseFontSize = 250;
-
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "black";
-            ctx.font = `${baseFontSize}px 'National Park', sans-serif`;
-
-            inputString = inputString.trim();
-            const textWidth = ctx.measureText(inputString).width;
-            if (textWidth - widthGrace <= maxWidth) {
-                ctx.fillText(inputString,
-                    inscriptionTextureDimensions.width / 2,
-                    inscriptionTextureDimensions.height / 2 + 25,
-                    inscriptionTextureDimensions.width * 0.8
-                );
-            }
-            else {
-                // thankfully the input is limited so only have to handle a single linebreak
-
-                // find the space closest to the center of the line
-                const matches = inputString.matchAll(/\s/g);
-                const breaks = {};
-                for (const match of matches) {
-                    breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
-                }
-                const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-                const breakIdx = parseInt(breakStr);
-
-                const line1 = inputString.substring(0, breakIdx).trim();
-                const line2 = inputString.substring(breakIdx+1).trim();
-
-                ctx.font = `${baseFontSize / 2}px 'National Park', sans-serif`;
-
-                const metrics = ctx.measureText(line1);
-                const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-
-                ctx.fillText(line1,
-                    inscriptionTextureDimensions.width / 2,
-                    (inscriptionTextureDimensions.height / 2 + 25) - (height * 0.7),
-                    inscriptionTextureDimensions.width * 0.8
-                );
-                ctx.fillText(line2,
-                    inscriptionTextureDimensions.width / 2,
-                    (inscriptionTextureDimensions.height / 2 + 25) + (height * 0.7),
-                    inscriptionTextureDimensions.width * 0.8
-                );
-            }
-
-            inscriptionTexture.update();
-
-
             const movingLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
             const ar = movingLog.getAnimationRange("PresentLog");
             scene.beginAnimation(
@@ -164,6 +106,13 @@
                              );
             woodRect.left += 8; // accounting for offset shape of wood
             $inscriptionRect = woodRect;
+        }
+
+        else if (currentState == State.Reading) {
+            $inscriptionRect = null;
+            setTimeout(() => {
+                setState(State.Placing);
+            }, 1500);
         }
     }
 
@@ -201,10 +150,10 @@
         inscriptionBaseColor = inscMat.albedoColor;
 
         inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
-        inscriptionTexture.update(); // texture's not visible yet, but loading never finishes otherwise
+        setInscription("");
         inscMat.albedoTexture = inscriptionTexture;
 
-        setState(State.Drawing);
+        setState(State.Ready);
 
         engine.runRenderLoop(() => {
             scene.render();
@@ -242,11 +191,71 @@
         teardown();
     });
 
+    function setInscription(inputString: string) {
+        const ctx = inscriptionTexture.getContext();
+        ctx.fillStyle = inscriptionBaseColor.toHexString();
+        ctx.fillRect(0, 0, inscriptionTextureDimensions.width, inscriptionTextureDimensions.height);
+
+        const maxWidth = inscriptionTextureDimensions.width * 0.8;
+        const widthGrace = 200; // canvas will do some squishing automatically,
+                                // and it can look pretty ok
+        const baseFontSize = 250;
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        ctx.font = `${baseFontSize}px 'National Park', sans-serif`;
+
+        inputString = inputString.trim();
+        const textWidth = ctx.measureText(inputString).width;
+        if (textWidth - widthGrace <= maxWidth) {
+            ctx.fillText(inputString,
+                inscriptionTextureDimensions.width / 2,
+                inscriptionTextureDimensions.height / 2 + 25,
+                inscriptionTextureDimensions.width * 0.8
+            );
+        }
+        else {
+            // thankfully the input is limited so only have to handle a single linebreak
+
+            // find the space closest to the center of the line
+            const matches = inputString.matchAll(/\s/g);
+            const breaks = {};
+            for (const match of matches) {
+                breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
+            }
+            const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+            const breakIdx = parseInt(breakStr);
+
+            const line1 = inputString.substring(0, breakIdx).trim();
+            const line2 = inputString.substring(breakIdx+1).trim();
+
+            ctx.font = `${baseFontSize / 2}px 'National Park', sans-serif`;
+
+            const metrics = ctx.measureText(line1);
+            const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+            ctx.fillText(line1,
+                inscriptionTextureDimensions.width / 2,
+                (inscriptionTextureDimensions.height / 2 + 25) - (height * 0.7),
+                inscriptionTextureDimensions.width * 0.8
+            );
+            ctx.fillText(line2,
+                inscriptionTextureDimensions.width / 2,
+                (inscriptionTextureDimensions.height / 2 + 25) + (height * 0.7),
+                inscriptionTextureDimensions.width * 0.8
+            );
+        }
+
+        inscriptionTexture.update();
+    }
+
     $: if ($inscriptionQueue.length > 0) {
         // not actually treating as a queue for now
         const inscription = $inscriptionQueue[0];
 
-
+        setInscription(inscription);
+        setState(State.Reading);
 
         $inscriptionQueue = [];
     }
