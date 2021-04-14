@@ -1,8 +1,4 @@
-- immediate
-    - animate next step of log going in fire
-
 * Store procedure:
-    - log goes in fire and disappears
     - store item to local storage
         - text, entered date, last seen, times seen
 * Withdraw procedure
@@ -15,9 +11,7 @@
 * figure out why position/aspect get screwed up when rotating device
 * UX polish
     - opening title
-    - font choices, etc
     - ability to put log back instead of inscribing
-    - infinite woodpile
 * Visual pass:
     - overall lighting, sky, colors
     - trees and shrubs

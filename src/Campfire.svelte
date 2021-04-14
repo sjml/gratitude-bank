@@ -37,6 +37,8 @@
     let engine: BABYLON.Engine = null;
     let scene: BABYLON.Scene = null;
 
+    let animLog: BABYLON.Mesh = null;
+    let animLogStart = [];
     let inscriptionTexture: BABYLON.DynamicTexture = null;
     let inscriptionBaseColor: BABYLON.Color3 = null;
     const inscriptionTextureDimensions = {width: 2048, height: 512};
@@ -45,7 +47,7 @@
         Ready = 1,
         Drawing = 2,
         Scribing = 3,
-        Reading = 4,
+        Contemplating = 4,
         Placing = 5,
         Summoning = 6,
         Remembering = 7,
@@ -60,6 +62,10 @@
             const drawAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function() {
                 setState(State.Drawing);
             });
+
+            setInscription("");
+            // animLog.position = animLogStart[0];
+            // animLog.rotation = animLogStart[1];
 
             woodPile.forEach((tgtName: string) => {
                 const tgtMesh = scene.getMeshByName(tgtName);
@@ -87,10 +93,9 @@
                 }
             });
 
-            const movingLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
-            const ar = movingLog.getAnimationRange("PresentLog");
+            const ar = animLog.getAnimationRange("PresentLog");
             scene.beginAnimation(
-                movingLog, // target
+                animLog, // target
                 ar.from, ar.to, // range
                 false, // loop
                 1.0, // speed ratio
@@ -108,17 +113,30 @@
             $inscriptionRect = woodRect;
         }
 
-        else if (currentState == State.Reading) {
+        else if (currentState == State.Contemplating) {
             $inscriptionRect = null;
             setTimeout(() => {
                 setState(State.Placing);
             }, 1500);
+        }
+
+        else if (currentState == State.Placing) {
+            console.log("placing...");
+            const ar = animLog.getAnimationRange("PlaceLog");
+            scene.beginAnimation(
+                animLog, // target
+                ar.from, ar.to, // range
+                false, // loop
+                1.0, // speed ratio
+                () => setState(State.Ready) // on complete
+            );
         }
     }
 
 
     const woodPile = [
         "AnimLog",
+        "AnimLogProxy",
         "Log.005",
         "Log.006",
         "Log.007",
@@ -145,12 +163,14 @@
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
+        animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
+        animLogStart = [animLog.position, animLog.rotation];
+
         const inscSurf = scene.getMeshByName("InscriptionSurface");
         const inscMat = inscSurf.material as BABYLON.PBRMaterial;
         inscriptionBaseColor = inscMat.albedoColor;
 
         inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
-        setInscription("");
         inscMat.albedoTexture = inscriptionTexture;
 
         setState(State.Ready);
@@ -255,7 +275,7 @@
         const inscription = $inscriptionQueue[0];
 
         setInscription(inscription);
-        setState(State.Reading);
+        setState(State.Contemplating);
 
         $inscriptionQueue = [];
     }
