@@ -1,5 +1,10 @@
+<script lang="ts" context="module">
+    export const maxInputLength = 55;
+</script>
+
 <script lang="ts">
     import { inscriptionRect, inscriptionQueue } from "./stores";
+    import { storeGratitude } from "./util";
 
     let inputBox: HTMLInputElement = null;
     $: {
@@ -14,7 +19,16 @@
         if (inputValue.length == 0) {
             return;
         }
+
+        if (inputValue.length > maxInputLength) {
+            // in case any stinkers hack the input field
+            inputValue = inputValue.substr(0, maxInputLength);
+        }
+
         $inscriptionQueue = [...$inscriptionQueue, inputValue];
+
+        storeGratitude(inputValue);
+
         inputValue = "";
     }
 </script>
@@ -29,7 +43,7 @@
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
             >
                 <div>What are you grateful for?</div>
-                <input class="type" type="text" maxlength=55
+                <input class="type" type="text" maxlength={maxInputLength}
                     bind:this={inputBox}
                     bind:value={inputValue}
                 >

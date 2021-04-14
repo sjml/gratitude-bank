@@ -32,4 +32,27 @@ export function getClientRectFromMesh(mesh: Mesh, scene: Scene, canvas: HTMLCanv
     }
 
     return rect;
-  }
+}
+
+
+export function storeGratitude(text: string) {
+    const storeDate = Date.now();
+
+    const gratitudeStr = localStorage.getItem("gratitude_storage_v1");
+    let gratitude = [];
+    if (gratitudeStr !== null) {
+        gratitude = JSON.parse(gratitudeStr);
+    }
+
+    const existingIdx = gratitude.findIndex(o => o.text == text);
+    if (existingIdx == -1) {
+        gratitude.push({
+            text: text,
+            storedOn: storeDate,
+            lastSeen: null,
+            timesSeen: 0
+        });
+
+        localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
+    }
+}
