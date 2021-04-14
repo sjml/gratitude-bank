@@ -1,17 +1,4 @@
 {
-    "producer": {
-        "name": "Blender",
-        "version": "2.92.0",
-        "exporter_version": "2.91-alpha",
-        "file": "campfire.babylon"
-    },
-    "autoClear": true,
-    "clearColor": [0.0509, 0.0509, 0.0509],
-    "gravity": [0, -9.81, 0],
-    "materials": [],
-    "multiMaterials": [],
-    "skeletons": [],
-    "meshes": [],
     "particleSystems": [
         {
             "name": "Fire",
@@ -84,7 +71,6 @@
             "preventAutoStart": false
         }
     ],
-    "morphTargetManagers": [],
     "lights": [
         {
             "name": "FireLight",
@@ -98,6 +84,5 @@
             "specular": [1, 0.376, 0.1041],
             "radius": 0.61
         }
-    ],
-    "shadowGenerators": []
+    ]
 }

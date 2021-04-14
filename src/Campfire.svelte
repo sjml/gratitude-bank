@@ -1,6 +1,10 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
 
+    import { inscriptionRect, inscriptionQueue } from "./stores";
+    import { getClientRectFromMesh } from "./util";
+
+
     import { Engine } from "@babylonjs/core/Engines/engine";
     import type { Scene } from "@babylonjs/core/scene";
     import { Vector3 } from "@babylonjs/core/Maths/math.vector";
@@ -17,12 +21,75 @@
     import "@babylonjs/core/Particles";
 
     import { ActionManager } from "@babylonjs/core/Actions/actionManager";
-    import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
+    import { ExecuteCodeAction, SetStateAction } from "@babylonjs/core/Actions/directActions";
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
     let engine: Engine = null;
     let scene: Scene = null;
+
+    enum State {
+        Ready = 1,
+        Drawing = 2,
+        Scribing = 3,
+        Placing = 4,
+        Summoning = 5,
+        Remembering = 6,
+        Dismissing = 7,
+    }
+    let currentState: State;
+
+    function setState(newState: State) {
+        currentState = newState;
+
+        if (currentState == State.Ready) {
+            const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, function() {
+                setState(State.Drawing);
+                const movingLog = scene.getMeshByName(woodPile[0]) as Mesh;
+                const ar = movingLog.getAnimationRange("PresentLog");
+                scene.beginAnimation(
+                    movingLog, // target
+                    ar.from, ar.to, // range
+                    false, // loop
+                    1.0, // speed ratio
+                    () => setState(State.Scribing) // on complete
+                );
+            });
+
+            woodPile.forEach((tgtName: string) => {
+                const tgtMesh = scene.getMeshByName(tgtName);
+                if (tgtMesh == null) {
+                    console.error("Could not find woodpile object: " + tgtName);
+                }
+                else {
+                    tgtMesh.actionManager = new ActionManager(scene);
+                    tgtMesh.actionManager.registerAction(drawAction);
+                }
+            });
+        }
+
+        else if (currentState == State.Drawing) {
+            woodPile.forEach((tgtName: string) => {
+                const tgtMesh = scene.getMeshByName(tgtName);
+                if (tgtMesh == null) {
+                    console.error("Could not find woodpile object: " + tgtName);
+                }
+                else {
+                    tgtMesh.actionManager.dispose();
+                    tgtMesh.actionManager = null;
+                }
+            });
+        }
+
+        else if (currentState == State.Scribing) {
+            $inscriptionRect = getClientRectFromMesh(
+                                    scene.getMeshByName(woodPile[0]) as Mesh,
+                                    scene,
+                                    renderCanvas
+                               );
+        }
+    }
+
 
     const woodPile = [
         "AnimLog",
@@ -32,11 +99,6 @@
         "Log.008",
         "Log.009",
     ];
-    let movingLog: Mesh = null;
-    let startingPosition: Vector3 = null;
-    let startingRotation: Vector3 = null;
-    let presentationPosition: Vector3 = new Vector3(2.0, 0.95, 0.86);
-    let presentationRotation: Vector3 = new Vector3(4.1, 1.1, 0.0);
 
     function CustomLoadingScreen() {
     }
@@ -52,24 +114,7 @@
         scene = await SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
         await SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
-        const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, function() {
-            // presentLog();
-        });
-
-        woodPile.forEach((tgtName: string) => {
-            const tgtMesh = scene.getMeshByName(tgtName);
-            if (tgtMesh == null) {
-                console.error("Could not find woodpile object: " + tgtName);
-            }
-            else {
-                tgtMesh.actionManager = new ActionManager(scene);
-                tgtMesh.actionManager.registerAction(drawAction);
-            }
-        });
-
-        movingLog = scene.getMeshByName(woodPile[0]) as Mesh;
-        startingPosition = movingLog.position;
-        startingRotation = movingLog.rotation;
+        setState(State.Ready);
 
         engine.runRenderLoop(() => {
             scene.render();
@@ -87,6 +132,13 @@
     function handleResize() {
         if (engine !== null) {
             engine.resize();
+            if (currentState == State.Scribing) {
+                $inscriptionRect = getClientRectFromMesh(
+                                        scene.getMeshByName(woodPile[0]) as Mesh,
+                                        scene,
+                                        renderCanvas
+                                   );
+            }
         }
     }
 
@@ -98,27 +150,42 @@
         teardown();
     });
 
+    $: if ($inscriptionQueue.length > 0) {
+        // not actually treating as a queue for now
+        const inscription = $inscriptionQueue[0];
 
-    function presentLog() {
-        movingLog.position = presentationPosition;
-        movingLog.rotation = presentationRotation;
+
+
+        $inscriptionQueue = [];
     }
 
 </script>
 
 <svelte:window on:resize={handleResize} />
 
-<div class="curtain" class:risen={loadingDone}></div>
+<div class="scene">
+    <div class="curtain" class:risen={loadingDone}></div>
 
-<canvas
-    bind:this={renderCanvas}
-    class="renderCanvas"
-    touch-action="none"
-/>
+    <canvas
+        bind:this={renderCanvas}
+        class="renderCanvas"
+        touch-action="none"
+    />
+</div>
 
 <style>
+    .scene {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     .curtain {
         position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         touch-action: none;
@@ -135,6 +202,9 @@
     }
 
     .renderCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         touch-action: none;
