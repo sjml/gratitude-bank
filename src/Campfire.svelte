@@ -4,31 +4,42 @@
     import { inscriptionRect, inscriptionQueue } from "./stores";
     import { getClientRectFromMesh } from "./util";
 
-    import { Engine } from "@babylonjs/core/Engines/engine";
-    import type { Scene } from "@babylonjs/core/scene";
-    import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
-    import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
-    import "@babylonjs/core/Loading/loadingScreen";
-    import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
-    import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+    import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 
-    import "@babylonjs/core/Cameras/universalCamera";
-    import "@babylonjs/materials";
+    //// will eventually restore these piece-wise imports for smaller build file,
+    ////   but trackign down all the bloody import locations was killing me
 
-    import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-    import "@babylonjs/core/Particles";
+    // import { Engine } from "@babylonjs/core/Engines/engine";
+    // import type { Scene } from "@babylonjs/core/scene";
+    // import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
-    import { ActionManager } from "@babylonjs/core/Actions/actionManager";
-    import { ExecuteCodeAction, SetStateAction } from "@babylonjs/core/Actions/directActions";
-    import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
-import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-import { Color3 } from "@babylonjs/core/Maths/math.color";
+    // import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
+    // import "@babylonjs/core/Loading/loadingScreen";
+    // import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+    // import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+
+    // import "@babylonjs/core/Cameras/universalCamera";
+    // import "@babylonjs/materials";
+
+    // import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
+    // import "@babylonjs/core/Particles";
+
+    // import { ActionManager } from "@babylonjs/core/Actions/actionManager";
+    // import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
+    // import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
+    // import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+    // import { DynamicTexture, StandardMaterial } from "@babylonjs/core";
+    // import { Color3 } from "@babylonjs/core/Maths/math.color";
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
-    let engine: Engine = null;
-    let scene: Scene = null;
+    let engine: BABYLON.Engine = null;
+    let scene: BABYLON.Scene = null;
+
+    let inscriptionTexture: BABYLON.DynamicTexture = null;
+    let inscriptionBaseColor: BABYLON.Color3 = null;
+    const inscriptionTextureDimensions = {width: 2048, height: 512};
 
     enum State {
         Ready = 1,
@@ -41,11 +52,11 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
     }
     let currentState: State;
 
-    function setState(newState: State) {
+    async function setState(newState: State) {
         currentState = newState;
 
         if (currentState == State.Ready) {
-            const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, function() {
+            const drawAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function() {
                 setState(State.Drawing);
             });
 
@@ -55,7 +66,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
                     console.error("Could not find woodpile object: " + tgtName);
                 }
                 else {
-                    tgtMesh.actionManager = new ActionManager(scene);
+                    tgtMesh.actionManager = new BABYLON.ActionManager(scene);
                     tgtMesh.actionManager.registerAction(drawAction);
                 }
             });
@@ -75,7 +86,66 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
                 }
             });
 
-            const movingLog = scene.getMeshByName(woodPile[0]) as Mesh;
+            const ctx = inscriptionTexture.getContext();
+            ctx.fillStyle = inscriptionBaseColor.toHexString();
+            ctx.fillRect(0, 0, inscriptionTextureDimensions.width, inscriptionTextureDimensions.height);
+
+            let inputString = "The way my cat looks embarrassed when she misses a jump";
+            const maxWidth = inscriptionTextureDimensions.width * 0.8;
+            const widthGrace = 200; // canvas will do some squishing automatically,
+                                    // and it can look pretty ok
+            const baseFontSize = 250;
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "black";
+            ctx.font = `${baseFontSize}px 'National Park', sans-serif`;
+
+            inputString = inputString.trim();
+            const textWidth = ctx.measureText(inputString).width;
+            if (textWidth - widthGrace <= maxWidth) {
+                ctx.fillText(inputString,
+                    inscriptionTextureDimensions.width / 2,
+                    inscriptionTextureDimensions.height / 2 + 25,
+                    inscriptionTextureDimensions.width * 0.8
+                );
+            }
+            else {
+                // thankfully the input is limited so only have to handle a single linebreak
+
+                // find the space closest to the center of the line
+                const matches = inputString.matchAll(/\s/g);
+                const breaks = {};
+                for (const match of matches) {
+                    breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
+                }
+                const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+                const breakIdx = parseInt(breakStr);
+
+                const line1 = inputString.substring(0, breakIdx).trim();
+                const line2 = inputString.substring(breakIdx+1).trim();
+
+                ctx.font = `${baseFontSize / 2}px 'National Park', sans-serif`;
+
+                const metrics = ctx.measureText(line1);
+                const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+                ctx.fillText(line1,
+                    inscriptionTextureDimensions.width / 2,
+                    (inscriptionTextureDimensions.height / 2 + 25) - (height * 0.7),
+                    inscriptionTextureDimensions.width * 0.8
+                );
+                ctx.fillText(line2,
+                    inscriptionTextureDimensions.width / 2,
+                    (inscriptionTextureDimensions.height / 2 + 25) + (height * 0.7),
+                    inscriptionTextureDimensions.width * 0.8
+                );
+            }
+
+            inscriptionTexture.update();
+
+
+            const movingLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
             const ar = movingLog.getAnimationRange("PresentLog");
             scene.beginAnimation(
                 movingLog, // target
@@ -88,7 +158,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
 
         else if (currentState == State.Scribing) {
             const woodRect = getClientRectFromMesh(
-                                scene.getMeshByName(woodPile[0]) as Mesh,
+                                scene.getMeshByName(woodPile[0]) as BABYLON.Mesh,
                                 scene,
                                 renderCanvas
                              );
@@ -116,11 +186,23 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
     };
 
     async function init() {
-        engine = new Engine(renderCanvas, true, {disableWebGL2Support: true});
+        engine = new BABYLON.Engine(renderCanvas, true, {disableWebGL2Support: true});
+
+        const pixelRatio = window.devicePixelRatio;
+        engine.setHardwareScalingLevel(1.0 / pixelRatio);
+
         engine.loadingScreen = new CustomLoadingScreen();
-        scene = await SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
-        await SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
-        await SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
+        scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
+
+        const inscSurf = scene.getMeshByName("InscriptionSurface");
+        const inscMat = inscSurf.material as BABYLON.PBRMaterial;
+        inscriptionBaseColor = inscMat.albedoColor;
+
+        inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
+        inscriptionTexture.update(); // texture's not visible yet, but loading never finishes otherwise
+        inscMat.albedoTexture = inscriptionTexture;
 
         setState(State.Drawing);
 
@@ -142,7 +224,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
             engine.resize();
             if (currentState == State.Scribing) {
                 const woodRect = getClientRectFromMesh(
-                                    scene.getMeshByName(woodPile[0]) as Mesh,
+                                    scene.getMeshByName(woodPile[0]) as BABYLON.Mesh,
                                     scene,
                                     renderCanvas
                                  );

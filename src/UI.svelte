@@ -20,6 +20,8 @@
 </script>
 
 <div class="ui-layer">
+    <div class="title">Gratitude</div>
+
     <!-- {#if $inscriptionRect != null} -->
     {#if false}
         <form on:submit|preventDefault={inscribe}>
@@ -27,7 +29,7 @@
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
             >
                 <div>What are you grateful for?</div>
-                <input class="type" type="text" maxlength=20
+                <input class="type" type="text" maxlength=55
                     bind:this={inputBox}
                     bind:value={inputValue}
                 >
@@ -47,6 +49,18 @@
         z-index: 30;
 
         pointer-events: none;
+        font-weight: bold;
+    }
+
+    .title {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        color: white;
+        padding: 5px 10px;
+        font-size: 40px;
+        letter-spacing: 3.3px;
     }
 
     .ui-layer > * {

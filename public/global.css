@@ -1,3 +1,20 @@
+@font-face {
+    font-family: 'National Park';
+    src: url('./fonts/NationalPark-Regular.woff2') format('woff2'),
+         url('./fonts/NationalPark-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'National Park';
+    src: url('./fonts/NationalPark-Heavy.woff2') format('woff2'),
+         url('./fonts/NationalPark-Heavy.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+
 html, body {
     overflow: hidden;
     width: 100%;
@@ -5,5 +22,5 @@ html, body {
     margin: 0;
     padding: 0;
 
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'National Park', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }

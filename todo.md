@@ -1,12 +1,9 @@
 - immediate
-    - use temporary fixed texture to figure out rendering
-        - may need to figure out lighting etc. first
-    - render input text into canvas, make it a texture
+    - take inscription from input, have it appear on log
     - animate next step of log going in fire
 
 * Store procedure:
-    - render onto log... somehow? 😬
-    - log goes in fire and disappears (fire briefly surges)
+    - log goes in fire and disappears
     - store item to local storage
         - text, entered date, last seen, times seen
 * Withdraw procedure
@@ -29,6 +26,7 @@
     - moving light
     - sparks coming off fire
     - little moving globules in fire
+    - have fire briefly surge when log goes in
     - UI fades in/out instead of popping
 * Write service worker for offline use
 * Build process
