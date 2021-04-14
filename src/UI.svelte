@@ -20,7 +20,8 @@
 </script>
 
 <div class="ui-layer">
-    {#if $inscriptionRect != null}
+    <!-- {#if $inscriptionRect != null} -->
+    {#if false}
         <form on:submit|preventDefault={inscribe}>
             <div class="inscription"
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
@@ -71,7 +72,7 @@
 
     .inscription input.type {
         height: 30px;
-        width: 100%;
+        width: 90%;
         margin: 5px 0;
 
         font-size: 28px;

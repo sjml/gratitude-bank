@@ -1,8 +1,7 @@
 - immediate
-    - break animlog into two pieces, one of which can take the texture
-    - make sure animation still works with the two pieces
-    - use temporary fixed texture to get alignment and UVs set
-    - render input text into canvas, make it a texture, apply to emissive?
+    - use temporary fixed texture to figure out rendering
+        - may need to figure out lighting etc. first
+    - render input text into canvas, make it a texture
     - animate next step of log going in fire
 
 * Store procedure:

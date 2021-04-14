@@ -4,7 +4,6 @@
     import { inscriptionRect, inscriptionQueue } from "./stores";
     import { getClientRectFromMesh } from "./util";
 
-
     import { Engine } from "@babylonjs/core/Engines/engine";
     import type { Scene } from "@babylonjs/core/scene";
     import { Vector3 } from "@babylonjs/core/Maths/math.vector";
@@ -17,11 +16,14 @@
     import "@babylonjs/core/Cameras/universalCamera";
     import "@babylonjs/materials";
 
-    import "@babylonjs/core/Lights/pointLight";
+    import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
     import "@babylonjs/core/Particles";
 
     import { ActionManager } from "@babylonjs/core/Actions/actionManager";
     import { ExecuteCodeAction, SetStateAction } from "@babylonjs/core/Actions/directActions";
+    import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
@@ -45,15 +47,6 @@
         if (currentState == State.Ready) {
             const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, function() {
                 setState(State.Drawing);
-                const movingLog = scene.getMeshByName(woodPile[0]) as Mesh;
-                const ar = movingLog.getAnimationRange("PresentLog");
-                scene.beginAnimation(
-                    movingLog, // target
-                    ar.from, ar.to, // range
-                    false, // loop
-                    1.0, // speed ratio
-                    () => setState(State.Scribing) // on complete
-                );
             });
 
             woodPile.forEach((tgtName: string) => {
@@ -75,18 +68,32 @@
                     console.error("Could not find woodpile object: " + tgtName);
                 }
                 else {
-                    tgtMesh.actionManager.dispose();
-                    tgtMesh.actionManager = null;
+                    if (tgtMesh.actionManager !== null) {
+                        tgtMesh.actionManager.dispose();
+                        tgtMesh.actionManager = null;
+                    }
                 }
             });
+
+            const movingLog = scene.getMeshByName(woodPile[0]) as Mesh;
+            const ar = movingLog.getAnimationRange("PresentLog");
+            scene.beginAnimation(
+                movingLog, // target
+                ar.from, ar.to, // range
+                false, // loop
+                1.0, // speed ratio
+                () => setState(State.Scribing) // on complete
+            );
         }
 
         else if (currentState == State.Scribing) {
-            $inscriptionRect = getClientRectFromMesh(
-                                    scene.getMeshByName(woodPile[0]) as Mesh,
-                                    scene,
-                                    renderCanvas
-                               );
+            const woodRect = getClientRectFromMesh(
+                                scene.getMeshByName(woodPile[0]) as Mesh,
+                                scene,
+                                renderCanvas
+                             );
+            woodRect.left += 8; // accounting for offset shape of wood
+            $inscriptionRect = woodRect;
         }
     }
 
@@ -112,9 +119,10 @@
         engine = new Engine(renderCanvas, true, {disableWebGL2Support: true});
         engine.loadingScreen = new CustomLoadingScreen();
         scene = await SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
+        await SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
         await SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
-        setState(State.Ready);
+        setState(State.Drawing);
 
         engine.runRenderLoop(() => {
             scene.render();
@@ -133,11 +141,13 @@
         if (engine !== null) {
             engine.resize();
             if (currentState == State.Scribing) {
-                $inscriptionRect = getClientRectFromMesh(
-                                        scene.getMeshByName(woodPile[0]) as Mesh,
-                                        scene,
-                                        renderCanvas
-                                   );
+                const woodRect = getClientRectFromMesh(
+                                    scene.getMeshByName(woodPile[0]) as Mesh,
+                                    scene,
+                                    renderCanvas
+                                 );
+                woodRect.left += 8; // accounting for offset shape of wood
+                $inscriptionRect = woodRect;
             }
         }
     }

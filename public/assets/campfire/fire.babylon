@@ -70,19 +70,5 @@
             "customShader": null,
             "preventAutoStart": false
         }
-    ],
-    "lights": [
-        {
-            "name": "FireLight",
-            "id": "FireLight",
-            "type": 0,
-            "position": [0, 0.0605, 0],
-            "range": 40,
-            "intensityMode": 0,
-            "intensity": 1,
-            "diffuse": [1, 0.376, 0.1041],
-            "specular": [1, 0.376, 0.1041],
-            "radius": 0.61
-        }
     ]
 }
