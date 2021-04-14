@@ -6,8 +6,7 @@
         "file": "campfire_set.babylon"
     },
     "autoClear": true,
-    "clearColor": [0.0509, 0.0509, 0.0509, 1],
-    "ambientColor": [0, 0, 0],
+    "clearColor": [0.0137, 0.0159, 0.0947],
     "gravity": [0, -9.81, 0],
     "materials": [
         {
