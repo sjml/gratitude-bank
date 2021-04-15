@@ -3,5 +3,6 @@
 
 .DS_Store
 scripts/deploy.sh
+dist
 
 *.blend1
