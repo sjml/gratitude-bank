@@ -1,9 +1,3 @@
-* Withdraw procedure
-    - render to canvas, make to texture
-    - rise out fire with nice effects, stay hovering in front
-    - swipe or tap down to retain, swipe or tap up to release
-        - if retain: mark last seen
-        - if release: remove from storage
 * figure out why position/aspect get screwed up when rotating device
     - think this is mostly fixed by moving height to 100vh, but not tested to the extreme
     - may need to do JS setting instead of relying on CSS :(
@@ -32,6 +26,9 @@
         - sparks coming off
         - little moving globules
         - have fire briefly surge when log goes in
+    - summon FX
+        - smoke from fire, rise up, fade in
+        - disappear or return
 * Make service worker for offline use
 * Build process
     - minify JSON

@@ -3,8 +3,8 @@
 </script>
 
 <script lang="ts">
-    import { inscriptionRect, inscriptionQueue } from "./stores";
-    import { storeGratitude } from "./util";
+    import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
+    import { storeGratitude, releaseGratitude } from "./util";
 
     let inputBox: HTMLInputElement = null;
     $: {
@@ -31,13 +31,21 @@
 
         inputValue = "";
     }
+
+    function release() {
+        releaseGratitude($currentGratitude.text);
+        $summonResolution = "release";
+    }
+
+    function retain() {
+        $summonResolution = "retain";
+    }
 </script>
 
 <div class="ui-layer">
     <div class="title">Gratitude</div>
 
     {#if $inscriptionRect != null}
-    <!-- {#if false} -->
         <form on:submit|preventDefault={inscribe}>
             <div class="inscription"
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
@@ -50,6 +58,13 @@
                 <input class="submit" type="submit" value="Inscribe" disabled={inputValue.length == 0}>
             </div>
         </form>
+    {:else if $summonRect != null}
+        <div class="remembering"
+            style={`top: ${$summonRect.top}px; left: ${$summonRect.left}px; width: ${$summonRect.width}px; height: ${$summonRect.height}px;`}
+        >
+            <button on:click={release}>Release</button>
+            <button on:click={retain}>Retain</button>
+        </div>
     {/if}
 </div>
 
@@ -116,7 +131,7 @@
         outline: none;
     }
 
-    .inscription input.submit {
+    .inscription input.submit, .remembering button {
         padding: 5px 20px;
         color: white;
         background-color: rgba(0, 17, 68, 0.8);
@@ -135,5 +150,16 @@
 
     .inscription input.submit:active {
         background-color: rgba(62, 86, 158, 0.8);
+    }
+
+    .remembering {
+        position: relative;
+
+        color: white;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>

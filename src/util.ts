@@ -34,7 +34,7 @@ export function getClientRectFromMesh(mesh: Mesh, scene: Scene, canvas: HTMLCanv
     return rect;
 }
 
-type Gratitude = {
+export type Gratitude = {
     text: string,
     storedOn: number,
     lastSeen: number|null,
@@ -107,6 +107,14 @@ export function recallGratitude() : Gratitude {
     localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
 
     return gratitude[0];
+}
+
+export function releaseGratitude(text: string) {
+    let gratitude = _getGratitudeList();
+
+    gratitude = gratitude.filter((g) => g.text != text);
+
+    localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
 }
 
 export function getGratitudeCount() {
