@@ -1,6 +1,8 @@
 * figure out why position/aspect get screwed up when rotating device
     - think this is mostly fixed by moving height to 100vh, but not tested to the extreme
     - may need to do JS setting instead of relying on CSS :(
+    - about screen being a PITA too
+
 * UX polish
     - opening title, about page, etc.
     - social share card
@@ -11,6 +13,7 @@
         - reverse animation, go back to ready state
 * Visual pass:
     - better 3d animations
+    - smarter text packing into textures
     - UI
         - fade in/out instead of popping
         - add some shadow to text prompt (gets lost in fire)

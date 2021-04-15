@@ -433,27 +433,37 @@
             for (const match of matches) {
                 breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
             }
-            const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-            const breakIdx = parseInt(breakStr);
+            if (Object.keys(breaks).length == 0) {
+                ctx.fillText(inputString,
+                    summonTextureDimensions.width / 2,
+                    summonTextureDimensions.height / 2,
+                    maxWidth
+                );
+            }
+            else {
+                const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+                const breakIdx = parseInt(breakStr);
 
-            const line1 = inputString.substring(0, breakIdx).trim();
-            const line2 = inputString.substring(breakIdx+1).trim();
+                const line1 = inputString.substring(0, breakIdx).trim();
+                const line2 = inputString.substring(breakIdx+1).trim();
 
-            ctx.font = `bold ${baseFontSize / 2}px 'Amatic_SC', sans-serif`;
+                ctx.font = `bold ${baseFontSize / 2}px 'Amatic_SC', sans-serif`;
 
-            const metrics = ctx.measureText(line1);
-            const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+                const metrics = ctx.measureText(line1);
+                const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
-            ctx.fillText(line1,
-                summonTextureDimensions.width / 2,
-                (summonTextureDimensions.height / 2) - (height * 0.7),
-                maxWidth
-            );
-            ctx.fillText(line2,
-                summonTextureDimensions.width / 2,
-                (summonTextureDimensions.height / 2) + (height * 0.7),
-                summonTextureDimensions.width
-            );
+                ctx.fillText(line1,
+                    summonTextureDimensions.width / 2,
+                    (summonTextureDimensions.height / 2) - (height * 0.7),
+                    maxWidth
+                );
+                ctx.fillText(line2,
+                    summonTextureDimensions.width / 2,
+                    (summonTextureDimensions.height / 2) + (height * 0.7),
+                    summonTextureDimensions.width
+                );
+            }
+
         }
 
         summonTexture.update();
