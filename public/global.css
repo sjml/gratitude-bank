@@ -1,15 +1,31 @@
 @font-face {
     font-family: 'National Park';
-    src: url('./fonts/NationalPark-Regular.woff2') format('woff2'),
-         url('./fonts/NationalPark-Regular.woff') format('woff');
+    src: url('./fonts/NationalPark/NationalPark-Regular.woff2') format('woff2'),
+         url('./fonts/NationalPark/NationalPark-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'National Park';
-    src: url('./fonts/NationalPark-Heavy.woff2') format('woff2'),
-         url('./fonts/NationalPark-Heavy.woff') format('woff');
+    src: url('./fonts/NationalPark/NationalPark-Heavy.woff2') format('woff2'),
+         url('./fonts/NationalPark/NationalPark-Heavy.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Amatic_SC';
+    src: url('./fonts/Amatic_SC/AmaticSC-Regular.woff2') format('woff2'),
+         url('./fonts/Amatic_SC/AmaticSC-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Amatic_SC';
+    src: url('./fonts/Amatic_SC/AmaticSC-Bold.woff2') format('woff2'),
+         url('./fonts/Amatic_SC/AmaticSC-Bold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }

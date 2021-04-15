@@ -273,7 +273,7 @@
         if (textWidth - widthGrace <= maxWidth) {
             ctx.fillText(inputString,
                 inscriptionTextureDimensions.width / 2,
-                inscriptionTextureDimensions.height / 2 + 25,
+                inscriptionTextureDimensions.height / 2 + 15,
                 inscriptionTextureDimensions.width * 0.8
             );
         }
@@ -299,12 +299,12 @@
 
             ctx.fillText(line1,
                 inscriptionTextureDimensions.width / 2,
-                (inscriptionTextureDimensions.height / 2 + 25) - (height * 0.7),
+                (inscriptionTextureDimensions.height / 2 + 15) - (height * 0.7),
                 inscriptionTextureDimensions.width * 0.8
             );
             ctx.fillText(line2,
                 inscriptionTextureDimensions.width / 2,
-                (inscriptionTextureDimensions.height / 2 + 25) + (height * 0.7),
+                (inscriptionTextureDimensions.height / 2 + 15) + (height * 0.7),
                 inscriptionTextureDimensions.width * 0.8
             );
         }

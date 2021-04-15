@@ -72,8 +72,9 @@
 
         color: white;
         padding: 5px 10px;
+        font-family: 'Amatic_SC';
         font-size: 40px;
-        letter-spacing: 3.3px;
+        letter-spacing: 5px;
         font-weight: bold;
     }
 
@@ -95,7 +96,7 @@
     .inscription div {
         width: 100%;
 
-        font-size: 24px;
+        font-size: 30px;
 
         text-align: center;
     }
