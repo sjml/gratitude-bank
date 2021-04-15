@@ -30,7 +30,6 @@
     "@babylonjs/inspector": "^4.2.0",
     "@babylonjs/loaders": "^4.2.0",
     "@babylonjs/materials": "^4.2.0",
-    "markdown-it": "^12.0.4",
     "punycode": "^2.1.1",
     "sirv-cli": "^1.0.0"
   }

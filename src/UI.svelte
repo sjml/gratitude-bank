@@ -5,6 +5,9 @@
 <script lang="ts">
     import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
     import { storeGratitude, releaseGratitude } from "./util";
+    import About from "./About.svelte";
+
+    let aboutShown = false;
 
     let inputBox: HTMLInputElement = null;
     $: {
@@ -42,8 +45,17 @@
     }
 </script>
 
-<div class="ui-layer">
-    <div class="title">Gratitude</div>
+<div class="ui-layer" class:blocking={aboutShown}>
+    <div class="header">
+        {#if !aboutShown}
+            <div class="title">Gratitude</div>
+            <div class="aboutLink" on:click={() => aboutShown = true}>?</div>
+        {/if}
+    </div>
+
+    {#if aboutShown}
+        <About />
+    {/if}
 
     {#if $inscriptionRect != null}
         <form on:submit|preventDefault={inscribe}>
@@ -79,18 +91,42 @@
 
         pointer-events: none;
     }
+    .ui-layer.blocking {
+        pointer-events: all;
+    }
 
-    .title {
+    .header {
         position: absolute;
         top: 0;
         left: 0;
+        width: 100%;
 
         color: white;
+
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .title {
         padding: 5px 10px;
         font-family: 'Amatic_SC';
         font-size: 40px;
         letter-spacing: 5px;
         font-weight: bold;
+    }
+
+    .aboutLink {
+        margin: 10px;
+
+        border-radius: 50%;
+        font-size: 30px;
+        font-weight: bold;
+        padding: 5px 15px;
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .aboutLink:hover {
+        cursor: pointer;
     }
 
     .ui-layer > * {

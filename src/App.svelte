@@ -1,11 +1,11 @@
 <script lang="ts">
     import UI from "./UI.svelte";
-    import Campfire from "./Campfire.svelte";
+    // import Campfire from "./Campfire.svelte";
 </script>
 
 <div class="content">
     <UI/>
-    <Campfire/>
+    <!-- <Campfire/> -->
 </div>
 
 <style>
