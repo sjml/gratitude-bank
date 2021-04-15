@@ -1,13 +1,21 @@
 <script>
+    import { createEventDispatcher } from "svelte";
     import { fade } from "svelte/transition";
 
+    const dispatch = createEventDispatcher();
 </script>
 
 <div class="about"
     transition:fade|local
 >
+    <div class="nav">
+        <div class="close" on:click={() => dispatch("closed")}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M128,24A104,104,0,1,0,232,128,104.12041,104.12041,0,0,0,128,24Zm37.65625,130.34375a7.99915,7.99915,0,1,1-11.3125,11.3125L128,139.3125l-26.34375,26.34375a7.99915,7.99915,0,0,1-11.3125-11.3125L116.6875,128,90.34375,101.65625a7.99915,7.99915,0,0,1,11.3125-11.3125L128,116.6875l26.34375-26.34375a7.99915,7.99915,0,0,1,11.3125,11.3125L139.3125,128Z"></path></svg>
+        </div>
+    </div>
+
     <h1>Gratitude Bank</h1>
-    <p>by <a href="https://shaneliesegang.com" target="_blank">Shane Liesegang, SJ</a></p>
+    <p class="attribution">by <a href="https://shaneliesegang.com" target="_blank">Shane Liesegang, SJ</a></p>
 
     <h2 id="why-gratitude">Why Gratitude?</h2>
     <p>
@@ -22,9 +30,11 @@
         direction, you may still find something of value here.
     </p>
     <p>
-        When I was a Jesuit novice, my spiritual director was fond of reminding us to
+        When I was a <a href="https://beajesuit.org/jesuit-formation/the-novitiate/" target="_blank">
+        Jesuit novice</a>, my spiritual director was fond of reminding us to
         “go to gratitude” when faced with some challenge or spiritual bump in the
-        road. It’s part of the twice-daily prayer practice of Jesuits to review our
+        road. It’s part of <a href="https://www.ignatianspirituality.com/ignatian-prayer/the-examen/" target="_blank">
+        the twice-daily prayer practice of Jesuits</a> to review our
         thoughts, words, and actions in a methodical fashion, starting with gratitude
         for all our experiences. The reflection on gratitude is a crucial step,
         possibly the key to the entire experience of Ignatian spirituality.
@@ -89,9 +99,62 @@
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
         font-size: 20px;
+
+        overflow-y: scroll;
+    }
+
+    .nav {
+        position: sticky;
+        top: 0;
+        width: 100%;
+
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .close {
+        cursor: pointer;
+    }
+
+    .close svg {
+        height: 40px;
+        width: 40px;
+    }
+
+    h1 {
+        margin: 0;
+        font-family: 'Amatic_SC';
+    }
+
+    h2 {
+        margin: 40px 0 30px 0;
+    }
+
+    p.attribution {
+        margin-top: 0;
     }
 
     a, a:visited {
         color: white;
+    }
+
+    /* mix of scrollbar directives to work across browsers */
+    .about {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(185, 185, 185) black;
+    }
+
+    .about::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .about::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .about::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255);
+        border-radius: 20px;
+        border: 3px solid black;
     }
 </style>
