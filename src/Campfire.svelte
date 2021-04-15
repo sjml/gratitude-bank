@@ -2,7 +2,7 @@
     import { onDestroy, onMount } from "svelte";
 
     import { inscriptionRect, inscriptionQueue } from "./stores";
-    import { getClientRectFromMesh } from "./util";
+    import { getClientRectFromMesh, getGratitudeCount, recallGratitude } from "./util";
 
 
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
@@ -38,7 +38,6 @@
     let scene: BABYLON.Scene = null;
 
     let animLog: BABYLON.Mesh = null;
-    let animLogStart = [];
     let inscriptionTexture: BABYLON.DynamicTexture = null;
     let inscriptionBaseColor: BABYLON.Color3 = null;
     const inscriptionTextureDimensions = {width: 2048, height: 512};
@@ -58,28 +57,8 @@
     async function setState(newState: State) {
         currentState = newState;
 
-        if (currentState == State.Ready) {
-            const drawAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function() {
-                setState(State.Drawing);
-            });
-
-            setInscription("");
-            // animLog.position = animLogStart[0];
-            // animLog.rotation = animLogStart[1];
-
-            woodPile.forEach((tgtName: string) => {
-                const tgtMesh = scene.getMeshByName(tgtName);
-                if (tgtMesh == null) {
-                    console.error("Could not find woodpile object: " + tgtName);
-                }
-                else {
-                    tgtMesh.actionManager = new BABYLON.ActionManager(scene);
-                    tgtMesh.actionManager.registerAction(drawAction);
-                }
-            });
-        }
-
-        else if (currentState == State.Drawing) {
+        // disable opening click targets if not in Ready state
+        if (currentState !== State.Ready) {
             woodPile.forEach((tgtName: string) => {
                 const tgtMesh = scene.getMeshByName(tgtName);
                 if (tgtMesh == null) {
@@ -93,6 +72,54 @@
                 }
             });
 
+            const clickTgt = scene.getMeshByName("CampfireClickTarget");
+            if (clickTgt == null) {
+                console.error("Could not find campfire click target");
+            }
+            else {
+                if (clickTgt.actionManager !== null) {
+                    clickTgt.actionManager.dispose();
+                    clickTgt.actionManager = null;
+                }
+            }
+        }
+
+        // handle state transitions
+        if (currentState == State.Ready) {
+            setInscription("");
+
+            const drawAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
+                setState(State.Drawing);
+            });
+
+            const summonAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
+                setState(State.Summoning);
+            });
+
+            woodPile.forEach((tgtName: string) => {
+                const tgtMesh = scene.getMeshByName(tgtName);
+                if (tgtMesh == null) {
+                    console.error("Could not find woodpile object: " + tgtName);
+                }
+                else {
+                    tgtMesh.actionManager = new BABYLON.ActionManager(scene);
+                    tgtMesh.actionManager.registerAction(drawAction);
+                }
+            });
+
+            if (getGratitudeCount() > 0) {
+                const clickTgt = scene.getMeshByName("CampfireClickTarget");
+                if (clickTgt == null) {
+                    console.error("Could not find campfire click target");
+                }
+                else {
+                    clickTgt.actionManager = new BABYLON.ActionManager(scene);
+                    clickTgt.actionManager.registerAction(summonAction);
+                }
+            }
+        }
+
+        else if (currentState == State.Drawing) {
             const ar = animLog.getAnimationRange("PresentLog");
             scene.beginAnimation(
                 animLog, // target
@@ -131,6 +158,12 @@
                 () => setState(State.Ready) // on complete
             );
         }
+
+        else if (currentState == State.Summoning) {
+            const gratitudeObj = recallGratitude();
+            console.log(gratitudeObj);
+
+        }
     }
 
 
@@ -164,7 +197,6 @@
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
         animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
-        animLogStart = [animLog.position, animLog.rotation];
 
         const inscSurf = scene.getMeshByName("InscriptionSurface");
         const inscMat = inscSurf.material as BABYLON.PBRMaterial;
@@ -172,6 +204,16 @@
 
         inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
         inscMat.albedoTexture = inscriptionTexture;
+
+        // doesn't seem to be a way to export StandardMaterials out of Blender, so some switcheroo here
+        const cfEmpty = scene.getMeshByName("CampfireBB");
+        const secretCube = BABYLON.MeshBuilder.CreateBox("CampfireClickTarget", {}, scene);
+        secretCube.position = cfEmpty.position;
+        secretCube.rotation = cfEmpty.rotation;
+        secretCube.scaling = cfEmpty.scaling.scale(2.0);
+        const invisibleMaterial = new BABYLON.StandardMaterial("InvisibleMaterial", scene);
+        invisibleMaterial.alpha = 0.0;
+        secretCube.material = invisibleMaterial;
 
         setState(State.Ready);
 

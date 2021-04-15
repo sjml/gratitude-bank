@@ -2328,6 +2328,19 @@
                 }
             ],
             "instances": []
+        },
+        {
+            "name": "CampfireBB",
+            "id": "CampfireBB",
+            "position": [0.0116, 0.3456, -0.0071],
+            "rotation": [0, -0.3979, 0],
+            "scaling": [0.3649, 0.3529, 0.333],
+            "isVisible": false,
+            "isEnabled": true,
+            "checkCollisions": false,
+            "billboardMode": 0,
+            "receiveShadows": false,
+            "tags": ""
         }
     ],
     "morphTargetManagers": [],
