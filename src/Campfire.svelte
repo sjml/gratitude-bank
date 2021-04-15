@@ -5,47 +5,45 @@
     import { getClientRectFromMesh, getGratitudeCount, recallGratitude } from "./util";
 
 
-    import * as BABYLON from "@babylonjs/core/Legacy/legacy";
+    //// can switch this on temporarily if figuring out the location of specific imports is a pain
+    // import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 
-    //// will eventually restore these piece-wise imports for smaller build file,
-    ////   but trackign down all the bloody import locations was killing me
+    import { Engine } from "@babylonjs/core/Engines/engine";
+    import type { Scene } from "@babylonjs/core/scene";
+    import type { Color3 } from "@babylonjs/core/Maths/math.color";
+    import { BoxBuilder } from "@babylonjs/core/Meshes/Builders/boxBuilder";
 
-    // import { Engine } from "@babylonjs/core/Engines/engine";
-    // import type { Scene } from "@babylonjs/core/scene";
-    // import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+    import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
+    import "@babylonjs/core/Loading/loadingScreen";
+    import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+    import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 
-    // import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
-    // import "@babylonjs/core/Loading/loadingScreen";
-    // import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
-    // import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+    import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
+    import "@babylonjs/core/Particles";
 
-    // import "@babylonjs/core/Cameras/universalCamera";
-    // import "@babylonjs/materials";
+    import "@babylonjs/core/Cameras/universalCamera";
+    import "@babylonjs/materials";
+    import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
+    import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+    import { DynamicTexture, StandardMaterial } from "@babylonjs/core";
 
-    // import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-    // import "@babylonjs/core/Particles";
-
-    // import { ActionManager } from "@babylonjs/core/Actions/actionManager";
-    // import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
-    // import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
-    // import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-    // import { DynamicTexture, StandardMaterial } from "@babylonjs/core";
-    // import { Color3 } from "@babylonjs/core/Maths/math.color";
+    import { ActionManager } from "@babylonjs/core/Actions/actionManager";
+    import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
 
     let initDone = false;
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
-    let engine: BABYLON.Engine = null;
-    let scene: BABYLON.Scene = null;
+    let engine: Engine = null;
+    let scene: Scene = null;
 
-    let animLog: BABYLON.Mesh = null;
-    let inscriptionTexture: BABYLON.DynamicTexture = null;
-    let inscriptionBaseColor: BABYLON.Color3 = null;
+    let animLog: Mesh = null;
+    let inscriptionTexture: DynamicTexture = null;
+    let inscriptionBaseColor: Color3 = null;
     const inscriptionTextureDimensions = {width: 2048, height: 512};
 
-    let summonDisplay: BABYLON.Mesh = null;
-    let summonTexture: BABYLON.DynamicTexture = null
+    let summonDisplay: Mesh = null;
+    let summonTexture: DynamicTexture = null
     const summonTextureDimensions = {width: 2048, height: 2048};
 
     enum State {
@@ -122,11 +120,11 @@
             }
 
 
-            const drawAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
+            const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
                 setState(State.Drawing);
             });
 
-            const summonAction = new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, () => {
+            const summonAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
                 setState(State.Summoning);
             });
 
@@ -136,7 +134,7 @@
                     console.error("Could not find woodpile object: " + tgtName);
                 }
                 else {
-                    tgtMesh.actionManager = new BABYLON.ActionManager(scene);
+                    tgtMesh.actionManager = new ActionManager(scene);
                     tgtMesh.actionManager.registerAction(drawAction);
                 }
             });
@@ -147,7 +145,7 @@
                     console.error("Could not find campfire click target");
                 }
                 else {
-                    clickTgt.actionManager = new BABYLON.ActionManager(scene);
+                    clickTgt.actionManager = new ActionManager(scene);
                     clickTgt.actionManager.registerAction(summonAction);
                 }
             }
@@ -262,39 +260,39 @@
     };
 
     async function init() {
-        engine = new BABYLON.Engine(renderCanvas, true, {disableWebGL2Support: true});
+        engine = new Engine(renderCanvas, true, {disableWebGL2Support: true});
 
         const pixelRatio = window.devicePixelRatio;
         engine.setHardwareScalingLevel(1.0 / pixelRatio);
 
         engine.loadingScreen = new CustomLoadingScreen();
-        scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
-        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
-        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
+        scene = await SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
+        await SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
+        await SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
-        animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
+        animLog = scene.getMeshByName(woodPile[0]) as Mesh;
 
         const inscSurf = scene.getMeshByName("InscriptionSurface");
-        const inscMat = inscSurf.material as BABYLON.PBRMaterial;
+        const inscMat = inscSurf.material as PBRMaterial;
         inscriptionBaseColor = inscMat.albedoColor;
 
-        inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
+        inscriptionTexture = new DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
         inscMat.albedoTexture = inscriptionTexture;
 
         // doesn't seem to be a way to export StandardMaterials out of Blender, so some switcheroo here
         const cfEmpty = scene.getMeshByName("CampfireBB");
-        const secretCube = BABYLON.MeshBuilder.CreateBox("CampfireClickTarget", {}, scene);
+        const secretCube = BoxBuilder.CreateBox("CampfireClickTarget", {}, scene);
         secretCube.position = cfEmpty.position;
         secretCube.rotation = cfEmpty.rotation;
         secretCube.scaling = cfEmpty.scaling.scale(2.0);
-        const invisibleMaterial = new BABYLON.StandardMaterial("InvisibleMaterial", scene);
+        const invisibleMaterial = new StandardMaterial("InvisibleMaterial", scene);
         invisibleMaterial.alpha = 0.0;
         secretCube.material = invisibleMaterial;
 
-        summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
+        summonDisplay = scene.getMeshByName("SummoningDisplay") as Mesh;
 
-        const summonMat = new BABYLON.StandardMaterial("SummonMaterial", scene);
-        summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
+        const summonMat = new StandardMaterial("SummonMaterial", scene);
+        summonTexture = new DynamicTexture("Summon", summonTextureDimensions, scene, true);
         summonMat.emissiveTexture = summonTexture;
         summonMat.disableLighting = true;
         summonDisplay.material = summonMat;
