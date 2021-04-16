@@ -25,6 +25,9 @@
             return;
         }
 
+        // correcting for iOS's virtual keyboard glitchiness
+        window.scrollTo(0, 0);
+
         if (inputValue.length > maxInputLength) {
             // in case any stinkers hack the input field
             inputValue = inputValue.substr(0, maxInputLength);

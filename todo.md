@@ -1,13 +1,8 @@
-1. UX pass
-    - social share card, icon
-    - smarter recall procedure
-    - reposition camera + wood pile to accommodate smaller screens
-    - ability to put log back instead of inscribing
-2. Offline enable
+1. Offline enable
     - create service worker
     - build process hooks in with generated JSON hash for each file
     - JavaScript template? 
-3. Visual pass
+2. Visual pass
     - UI
         - revamp about text so it goes from title to about with smooth anims
             - title starts over curtain; moves to spot after load; about link fades in
@@ -22,6 +17,7 @@
         - the way fitty does it looks pretty simple...
     - better 3d animations
         - note that easing can be done at runtime, if that's simpler for some reason
+        - at the same time, make the end-caps on the logs yellow-ish
     - summon FX
         - have smoke come up and it rises out, or something else that looks decent
         - continue rise (release)
@@ -34,7 +30,9 @@
         - lighting, sky, colors
         - trees and shrubs, little tufts of grass
         - rocks around fire
-4. Stretches
+    - social share card, icon
+3. Stretches
+    - ability to put log back instead of inscribing
     - prompts on wood pile and fire at start
     - fire FX
         - have fire briefly surge when log goes in
