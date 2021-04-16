@@ -521,7 +521,7 @@
         touch-action: none;
         pointer-events: none;
 
-        background-color: black;
+        background-color: rgb(16, 16, 50);
         z-index: 50;
     }
     .curtain.risen {
