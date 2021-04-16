@@ -2,7 +2,7 @@
 /public/build/
 
 .DS_Store
-scripts/deploy.sh
-dist
+/scripts/deploy.sh
+/dist
 
 *.blend1
