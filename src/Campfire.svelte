@@ -14,7 +14,7 @@
     import { BoxBuilder } from "@babylonjs/core/Meshes/Builders/boxBuilder";
 
     import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
-    import type { ILoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
+    import type { ILoadingScreen } from "@babylonjs/core/Loading";
     import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
     import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 
@@ -330,7 +330,7 @@
                                     animLog,
                                     scene,
                                     renderCanvas
-                                 );
+                                    );
                 woodRect.left += 8; // accounting for offset shape of wood
                 $inscriptionRect = woodRect;
             }
@@ -513,11 +513,15 @@
 
 <style>
     .scene {
-        position: absolute;
-        top: 0;
-        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .renderCanvas {
         width: 100%;
         height: 100%;
+        touch-action: none;
     }
 
     .curtain {
@@ -537,14 +541,5 @@
         transition-property: opacity;
         transition-delay: 500ms;
         transition-duration: 3000ms;
-    }
-
-    .renderCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        touch-action: none;
     }
 </style>

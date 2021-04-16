@@ -1,25 +1,21 @@
-1. Viewport sizing fixes
-    - remove about/UI stuff
-    - just figure out overall sizing of 3d and how it works with rotations
-    - then add UI back in
-        - revamp so it goes from title to about with smooth anims
-            - title starts over curtain; moves to spot after load; about link fades in
-            - on about, title moves to become header, about link becomes close and moves in
-            - about text fades in
-2. Minor code cleanup
+1. Minor code cleanup
     - Campfire.svelte is spaghetti; some cleanup maybe? 
     - move animations to awaits instead of callbacks (just for consistency)
-3. UX pass
+2. UX pass
     - social share card, icon
     - smarter recall procedure
     - reposition camera + wood pile to accommodate smaller screens
     - ability to put log back instead of inscribing
-4. Offline enable
+3. Offline enable
     - create service worker
     - build process hooks in with generated JSON hash for each file
     - JavaScript template? 
-5. Art pass
+4. Visual pass
     - UI
+        - revamp about text so it goes from title to about with smooth anims
+            - title starts over curtain; moves to spot after load; about link fades in
+            - on about, title moves to become header, about link becomes close and moves in
+            - about text fades in
         - fade in/out instead of popping
         - add some shadow to text prompt (gets lost in fire)
         - button styling on mobile
@@ -41,7 +37,7 @@
         - lighting, sky, colors
         - trees and shrubs, little tufts of grass
         - rocks around fire
-6. Stretches
+5. Stretches
     - prompts on wood pile and fire at start
     - fire FX
         - have fire briefly surge when log goes in
