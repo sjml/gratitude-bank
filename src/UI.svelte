@@ -6,7 +6,7 @@
     import { fade } from "svelte/transition";
 
     import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
-    import { storeGratitude, releaseGratitude } from "./util";
+    import { storeGratitude, releaseGratitude } from "./gratitude";
     import About from "./About.svelte";
 
     let aboutShown = false;

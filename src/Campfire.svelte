@@ -1,50 +1,42 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
 
-    import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
-    import { getClientRectFromMesh, getGratitudeCount, recallGratitude } from "./util";
+    import {
+        inscriptionRect, inscriptionQueue,
+        summonRect, currentGratitude, summonResolution } from "./stores";
+    import { pd, getClientRectFromMesh } from "./util";
+    import { getGratitudeCount, recallGratitude } from "./gratitude";
 
-
-    //// can switch this on temporarily if figuring out the location of specific imports is a pain
-    // import * as BABYLON from "@babylonjs/core/Legacy/legacy";
-
-    import { Engine } from "@babylonjs/core/Engines/engine";
-    import type { Scene } from "@babylonjs/core/scene";
-    import type { Color3 } from "@babylonjs/core/Maths/math.color";
-    import { BoxBuilder } from "@babylonjs/core/Meshes/Builders/boxBuilder";
-
-    import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
-    import type { ILoadingScreen } from "@babylonjs/core/Loading";
-    import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
-    import type { Mesh } from "@babylonjs/core/Meshes/mesh";
-
-    import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-    import "@babylonjs/core/Particles";
-
-    import "@babylonjs/core/Cameras/universalCamera";
-    import "@babylonjs/materials";
-    import type { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
-    import { Texture } from "@babylonjs/core/Materials/Textures/texture";
-    import { DynamicTexture, StandardMaterial } from "@babylonjs/core";
-
-    import { ActionManager } from "@babylonjs/core/Actions/actionManager";
-    import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
+    // Snowpack's tree-shaking is good enough that we can get away without doing individual imports.
+    //   This way we don't have to track down where every friggin' declaration is. Means the final
+    //   build takes a bit longer, but it's only for production build, so I'll take easier development.
+    import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 
     let initDone = false;
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
-    let engine: Engine = null;
-    let scene: Scene = null;
+    let engine: BABYLON.Engine = null;
+    let scene: BABYLON.Scene = null;
 
-    let animLog: Mesh = null;
-    let inscriptionTexture: DynamicTexture = null;
-    let inscriptionBaseColor: Color3 = null;
+    let animLog: BABYLON.Mesh = null;
+    let inscriptionTexture: BABYLON.DynamicTexture = null;
+    let inscriptionBaseColor: BABYLON.Color3 = null;
     const inscriptionTextureDimensions = {width: 2048, height: 512};
 
-    let summonDisplay: Mesh = null;
-    let summonTexture: DynamicTexture = null
+    let summonDisplay: BABYLON.Mesh = null;
+    let summonTexture: BABYLON.DynamicTexture = null
     const summonTextureDimensions = {width: 2048, height: 2048};
+
+    const woodPile = [
+        "AnimLog",
+        "AnimLogProxy",
+        "Log.005",
+        "Log.006",
+        "Log.007",
+        "Log.008",
+        "Log.009",
+    ];
 
     enum State {
         Preload = 0,
@@ -60,8 +52,54 @@
     }
     let currentState: State = State.Preload;
 
+
+    function addAction(meshName: string, action: BABYLON.Action) {
+        const tgtMesh = scene.getMeshByName(meshName);
+        if (tgtMesh == null) {
+            pd("Could not find mesh for action assignment:", meshName);
+        }
+        else {
+            if (tgtMesh.actionManager == null) {
+                tgtMesh.actionManager = new BABYLON.ActionManager(scene);
+            }
+            tgtMesh.actionManager.registerAction(action);
+        }
+    }
+
+    function clearActions(meshName: string) {
+        const tgtMesh = scene.getMeshByName(meshName);
+        if (tgtMesh == null) {
+            pd("Could not find mesh for action clearing:", meshName);
+        }
+        else {
+            if (tgtMesh.actionManager !== null) {
+                tgtMesh.actionManager.dispose();
+                tgtMesh.actionManager = null;
+            }
+        }
+    }
+
+    function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false) {
+        let animRange = mesh.getAnimationRange(animName);
+        let from: number, to: number;
+        if (reverse) {
+            [from, to] = [animRange.to, animRange.from];
+        }
+        else {
+            [to, from] = [animRange.to, animRange.from];
+        }
+        let animHandle = scene.beginAnimation(
+            mesh, // target
+            from, to, // range
+            false, // loop
+            1.0, // speed ratio
+            callback,
+        );
+        return {animHandle, animRange: {from, to}};
+    }
+
     async function setState(newState: State) {
-        console.log("Setting state:", State[newState]);
+        pd("Setting state:", State[newState]);
         currentState = newState;
 
         // disable opening click targets if not in Ready state
@@ -70,28 +108,10 @@
             $summonRect = null;
 
             woodPile.forEach((tgtName: string) => {
-                const tgtMesh = scene.getMeshByName(tgtName);
-                if (tgtMesh == null) {
-                    console.error("Could not find woodpile object: " + tgtName);
-                }
-                else {
-                    if (tgtMesh.actionManager !== null) {
-                        tgtMesh.actionManager.dispose();
-                        tgtMesh.actionManager = null;
-                    }
-                }
+                clearActions(tgtName);
             });
 
-            const clickTgt = scene.getMeshByName("CampfireClickTarget");
-            if (clickTgt == null) {
-                console.error("Could not find campfire click target");
-            }
-            else {
-                if (clickTgt.actionManager !== null) {
-                    clickTgt.actionManager.dispose();
-                    clickTgt.actionManager = null;
-                }
-            }
+            clearActions("CampfireClickTarget");
         }
 
         // handle state transitions
@@ -102,69 +122,40 @@
 
             if (initDone) {
                 // make sure anim log is in place
-                let ar = animLog.getAnimationRange("PresentLog");
-                let an = scene.beginAnimation(
-                    animLog, // target
-                    ar.from, ar.to, // range
-                    false, // loop
-                    1.0, // speed ratio
-                );
-                an.stop();
-                an.goToFrame(ar.from);
+                let animRes = runAnim(animLog, "PresentLog");
+                animRes.animHandle.stop();
+                animRes.animHandle.goToFrame(animRes.animRange.from);
 
                 // make sure summon is set below ground
-                ar = summonDisplay.getAnimationRange("Summon");
-                an = scene.beginAnimation(
-                    summonDisplay, // target
-                    ar.from, ar.to, // range
-                    false, // loop
-                    1.0, // speed ratio
-                );
-                an.stop();
-                an.goToFrame(ar.from);
+                animRes = runAnim(summonDisplay, "Summon");
+                animRes.animHandle.stop();
+                animRes.animHandle.goToFrame(animRes.animRange.from);
             }
 
 
-            const drawAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
-                setState(State.Drawing);
-            });
+            const drawAction = new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickTrigger, () => {
+                    setState(State.Drawing);
+                }
+            );
 
-            const summonAction = new ExecuteCodeAction(ActionManager.OnPickTrigger, () => {
-                setState(State.Summoning);
-            });
+            const summonAction = new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickTrigger, () => {
+                    setState(State.Summoning);
+                }
+            );
 
             woodPile.forEach((tgtName: string) => {
-                const tgtMesh = scene.getMeshByName(tgtName);
-                if (tgtMesh == null) {
-                    console.error("Could not find woodpile object: " + tgtName);
-                }
-                else {
-                    tgtMesh.actionManager = new ActionManager(scene);
-                    tgtMesh.actionManager.registerAction(drawAction);
-                }
+                addAction(tgtName, drawAction);
             });
 
             if (getGratitudeCount() > 0) {
-                const clickTgt = scene.getMeshByName("CampfireClickTarget");
-                if (clickTgt == null) {
-                    console.error("Could not find campfire click target");
-                }
-                else {
-                    clickTgt.actionManager = new ActionManager(scene);
-                    clickTgt.actionManager.registerAction(summonAction);
-                }
+                addAction("CampfireClickTarget", summonAction);
             }
         }
 
         else if (currentState == State.Drawing) {
-            const ar = animLog.getAnimationRange("PresentLog");
-            scene.beginAnimation(
-                animLog, // target
-                ar.from, ar.to, // range
-                false, // loop
-                1.0, // speed ratio
-                () => setState(State.Scribing) // on complete
-            );
+            runAnim(animLog, "PresentLog", () => setState(State.Scribing));
         }
 
         else if (currentState == State.Scribing) {
@@ -185,15 +176,7 @@
         }
 
         else if (currentState == State.Placing) {
-            console.log("placing...");
-            const ar = animLog.getAnimationRange("PlaceLog");
-            scene.beginAnimation(
-                animLog, // target
-                ar.from, ar.to, // range
-                false, // loop
-                1.0, // speed ratio
-                () => setState(State.Ready) // on complete
-            );
+            runAnim(animLog, "PlaceLog", () => setState(State.Ready));
         }
 
         else if (currentState == State.Summoning) {
@@ -201,14 +184,7 @@
 
             setSummonDisplay($currentGratitude.text);
 
-            const ar = summonDisplay.getAnimationRange("Summon");
-            scene.beginAnimation(
-                summonDisplay, // target
-                ar.from, ar.to, // range
-                false, // loop
-                1.0, // speed ratio
-                () => setState(State.Remembering) // on complete
-            );
+            runAnim(summonDisplay, "Summon", () => setState(State.Remembering));
         }
 
         else if (currentState == State.Remembering) {
@@ -222,42 +198,17 @@
 
         else if (currentState == State.Retaining) {
             $summonRect = null;
-            const ar = summonDisplay.getAnimationRange("Summon");
-            scene.beginAnimation(
-                summonDisplay, // target
-                ar.to, ar.from, // range
-                false, // loop
-                1.0, // speed ratio
-                () => setState(State.Ready) // on complete
-            );
+            runAnim(summonDisplay, "Summon", () => setState(State.Ready), true);
         }
 
         else if (currentState == State.Releasing) {
             $summonRect = null;
-            const ar = summonDisplay.getAnimationRange("Summon");
-            scene.beginAnimation(
-                summonDisplay, // target
-                ar.from, ar.from, // range
-                false, // loop
-                1.0, // speed ratio
-                () => setState(State.Ready) // on complete
-            );
+            setState(State.Ready);
         }
     }
 
 
-    const woodPile = [
-        "AnimLog",
-        "AnimLogProxy",
-        "Log.005",
-        "Log.006",
-        "Log.007",
-        "Log.008",
-        "Log.009",
-    ];
-
-
-    class CustomLoadingScreen implements ILoadingScreen {
+    class CustomLoadingScreen implements BABYLON.ILoadingScreen {
         public loadingUIBackgroundColor: string;
         public loadingUIText: string = "";
         constructor() {}
@@ -268,50 +219,49 @@
     }
 
     async function init() {
-        engine = new Engine(renderCanvas, true, {disableWebGL2Support: true});
+        engine = new BABYLON.Engine(renderCanvas, true, {disableWebGL2Support: true});
 
         const pixelRatio = window.devicePixelRatio;
         engine.setHardwareScalingLevel(1.0 / pixelRatio);
 
         engine.loadingScreen = new CustomLoadingScreen();
-        scene = await SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
-        await SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
-        await SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
+        scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
-        animLog = scene.getMeshByName(woodPile[0]) as Mesh;
+        animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
 
         const inscSurf = scene.getMeshByName("InscriptionSurface");
-        const inscMat = inscSurf.material as PBRMaterial;
+        const inscMat = inscSurf.material as BABYLON.PBRMaterial;
         inscriptionBaseColor = inscMat.albedoColor;
 
-        inscriptionTexture = new DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
+        inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
         inscMat.albedoTexture = inscriptionTexture;
 
         // doesn't seem to be a way to export StandardMaterials out of Blender, so some switcheroo here
         const cfEmpty = scene.getMeshByName("CampfireBB");
-        const secretCube = BoxBuilder.CreateBox("CampfireClickTarget", {}, scene);
+        const secretCube = BABYLON.BoxBuilder.CreateBox("CampfireClickTarget", {}, scene);
         secretCube.position = cfEmpty.position;
         secretCube.rotation = cfEmpty.rotation;
         secretCube.scaling = cfEmpty.scaling.scale(2.0);
-        const invisibleMaterial = new StandardMaterial("InvisibleMaterial", scene);
+        const invisibleMaterial = new BABYLON.StandardMaterial("InvisibleMaterial", scene);
         invisibleMaterial.alpha = 0.0;
         secretCube.material = invisibleMaterial;
 
-        summonDisplay = scene.getMeshByName("SummoningDisplay") as Mesh;
+        summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
 
-        const summonMat = new StandardMaterial("SummonMaterial", scene);
-        summonTexture = new DynamicTexture("Summon", summonTextureDimensions, scene, true);
+        const summonMat = new BABYLON.StandardMaterial("SummonMaterial", scene);
+        summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
         summonMat.emissiveTexture = summonTexture;
         summonMat.disableLighting = true;
         summonDisplay.material = summonMat;
 
         setState(State.Ready);
+        initDone = true;
 
         engine.runRenderLoop(() => {
             scene.render();
         });
-
-        initDone = true;
     }
 
     async function teardown() {
@@ -330,7 +280,7 @@
                                     animLog,
                                     scene,
                                     renderCanvas
-                                    );
+                                 );
                 woodRect.left += 8; // accounting for offset shape of wood
                 $inscriptionRect = woodRect;
             }

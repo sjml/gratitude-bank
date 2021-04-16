@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import type { Gratitude } from "./util";
+import type { Gratitude } from "./gratitude";
 
 export const inscriptionRect = writable<ClientRect>(null);
 export const inscriptionQueue = writable<string[]>([]);
