@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onDestroy, onMount, tick } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
     import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
     import { getClientRectFromMesh, getGratitudeCount, recallGratitude } from "./util";
@@ -14,7 +14,7 @@
     import { BoxBuilder } from "@babylonjs/core/Meshes/Builders/boxBuilder";
 
     import "@babylonjs/core/Loading/Plugins/babylonFileLoader";
-    import "@babylonjs/core/Loading/loadingScreen";
+    import type { ILoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
     import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
     import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 
@@ -47,6 +47,7 @@
     const summonTextureDimensions = {width: 2048, height: 2048};
 
     enum State {
+        Preload = 0,
         Ready = 1,
         Drawing = 2,
         Scribing = 3,
@@ -57,13 +58,17 @@
         Retaining = 8,
         Releasing = 9,
     }
-    let currentState: State;
+    let currentState: State = State.Preload;
 
     async function setState(newState: State) {
+        console.log("Setting state:", State[newState]);
         currentState = newState;
 
         // disable opening click targets if not in Ready state
         if (currentState !== State.Ready) {
+            $inscriptionRect = null;
+            $summonRect = null;
+
             woodPile.forEach((tgtName: string) => {
                 const tgtMesh = scene.getMeshByName(tgtName);
                 if (tgtMesh == null) {
@@ -251,13 +256,16 @@
         "Log.009",
     ];
 
-    function CustomLoadingScreen() {
+
+    class CustomLoadingScreen implements ILoadingScreen {
+        public loadingUIBackgroundColor: string;
+        public loadingUIText: string = "";
+        constructor() {}
+        public displayLoadingUI() {}
+        public hideLoadingUI() {
+            loadingDone = true;
+        }
     }
-    CustomLoadingScreen.prototype.displayLoadingUI = () => {
-    };
-    CustomLoadingScreen.prototype.hideLoadingUI = () => {
-        loadingDone = true;
-    };
 
     async function init() {
         engine = new Engine(renderCanvas, true, {disableWebGL2Support: true});
@@ -370,9 +378,9 @@
 
             // find the space closest to the center of the line
             const matches = inputString.matchAll(/\s/g);
-            const breaks = {};
+            const breaks: {[key: string]: number} = {};
             for (const match of matches) {
-                breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
+                breaks[String(match.index)] = Math.abs((inputString.length / 2) - match.index);
             }
             const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
             const breakIdx = parseInt(breakStr);
@@ -429,7 +437,7 @@
 
             // find the space closest to the center of the line
             const matches = inputString.matchAll(/\s/g);
-            const breaks = {};
+            const breaks: {[key: string]: number} = {};
             for (const match of matches) {
                 breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
             }
