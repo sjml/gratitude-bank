@@ -35,9 +35,14 @@ export default {
 	input: 'src/main.ts',
 	output: {
 		sourcemap: !production,
-		format: 'iife',
+		format: 'es',
 		name: 'app',
-		file: 'public/build/bundle.js'
+    dir: 'public/build/',
+    manualChunks: (moduleName) => {
+      if (moduleName.includes('node_modules')) {
+        return 'vendor';
+      }
+    }
 	},
 	plugins: [
 		svelte({
@@ -61,7 +66,9 @@ export default {
 			dedupe: ['svelte'],
       preferBuiltins: false,
 		}),
-		commonjs(),
+		commonjs({
+      sourceMap: false,
+    }),
     json(),
 		typescript({
 			sourceMap: !production,
