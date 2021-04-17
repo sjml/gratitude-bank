@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+    import { onMount } from "svelte";
     import { fade } from "svelte/transition";
 
     import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
@@ -10,6 +11,18 @@
     import About from "./About.svelte";
 
     let aboutShown = false;
+    let introRunning = true;
+    let aboutLinkVisible = false;
+
+    onMount(() => {
+        setTimeout(() => {
+            introRunning = false;
+        }, 800);
+        setTimeout(() => {
+            aboutLinkVisible = true;
+        }, 3500);
+    });
+
 
     let inputBox: HTMLInputElement = null;
     $: {
@@ -51,18 +64,25 @@
 </script>
 
 <div class="ui-layer" class:blocking={aboutShown}>
-    <div class="header">
-        {#if !aboutShown}
-            <div class="title"
-                transition:fade|local
-            >
-                Gratitude
-            </div>
+    <div class="header"
+        class:aboutShown
+    >
+        <div class="title"
+            class:intro={introRunning}
+            transition:fade|local
+        >
+            Gratitude
+        </div>
+        {#if aboutLinkVisible}
             <div class="aboutLink"
                 transition:fade|local
-                on:click={() => aboutShown = true}
+                on:click={() => aboutShown = !aboutShown}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M128.00146,23.99963a104,104,0,1,0,104,104A104.11791,104.11791,0,0,0,128.00146,23.99963ZM128.002,192a12,12,0,1,1,12-12A12,12,0,0,1,128.002,192Zm7.99951-48.891v.89551a8,8,0,1,1-16,0v-8a8.0004,8.0004,0,0,1,8-8,20,20,0,1,0-20-20,8,8,0,0,1-16,0,36,36,0,1,1,44,35.10449Z"></path></svg>
+                {#if !aboutShown}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M128.00146,23.99963a104,104,0,1,0,104,104A104.11791,104.11791,0,0,0,128.00146,23.99963ZM128.002,192a12,12,0,1,1,12-12A12,12,0,0,1,128.002,192Zm7.99951-48.891v.89551a8,8,0,1,1-16,0v-8a8.0004,8.0004,0,0,1,8-8,20,20,0,1,0-20-20,8,8,0,0,1-16,0,36,36,0,1,1,44,35.10449Z"></path></svg>
+                {:else}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M128,24A104,104,0,1,0,232,128,104.12041,104.12041,0,0,0,128,24Zm37.65625,130.34375a7.99915,7.99915,0,1,1-11.3125,11.3125L128,139.3125l-26.34375,26.34375a7.99915,7.99915,0,0,1-11.3125-11.3125L116.6875,128,90.34375,101.65625a7.99915,7.99915,0,0,1,11.3125-11.3125L128,116.6875l26.34375-26.34375a7.99915,7.99915,0,0,1,11.3125,11.3125L139.3125,128Z"></path></svg>
+                {/if}
             </div>
         {/if}
     </div>
@@ -115,15 +135,21 @@
     }
 
     .header {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
 
         color: white;
 
         display: flex;
         justify-content: space-between;
+
+        transition-property: max-width;
+        transition-duration: 500ms;
+        /* transition-timing-function: ease-in-out; */
+    }
+    .header.aboutShown {
+        max-width: 730px;
     }
 
     .title {
@@ -132,10 +158,31 @@
         font-size: 40px;
         letter-spacing: 5px;
         font-weight: bold;
+        text-shadow: 0px 0px 5px black;
+        opacity: 1.0;
+
+        transition-property: font-size, transform, opacity;
+        transition-duration: 2400ms, 2400ms, 50ms;
+        transition-delay: 0ms, 0ms, 200ms;
+        transition-timing-function: ease-in-out, ease-in-out, linear;
+    }
+    .title.intro {
+        font-size: 80px;
+        transform:
+            translateX(calc(50vw - 50%))
+            translateY(calc(50vh - 50%));
+    }
+    .header.aboutShown .title {
+        opacity: 0.0;
+        transition-property: font-size, transform, opacity;
+        /* transition-duration: 2400ms, 2400ms, 1000ms; */
+        transition-delay: 0ms, 0ms, 0ms;
     }
 
     .aboutLink {
         margin: 10px;
+
+        color: rgba(255, 255, 255, 0.596);
         cursor: pointer;
     }
 

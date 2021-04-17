@@ -1,9 +1,5 @@
 1. Visual pass
     - UI
-        - revamp about text so it goes from title to about with smooth anims
-            - title starts over curtain; moves to spot after load; about link fades in
-            - on about, title moves to become header, about link becomes close and moves in
-            - about text fades in
         - fade in/out instead of popping
         - add some shadow to text prompt (gets lost in fire)
         - button styling on mobile
