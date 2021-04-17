@@ -67,7 +67,6 @@
             </ul>
         </div>
 
-
         <p>
             Later, you can tap on the fire when you need to be reminded of gratitude.
             It will bring back one of the things you’ve stored away, to remind you of
@@ -93,6 +92,17 @@
             iOS, tap the “Share” button and select “Add to Home Screen.” On Android, tap
             the menu icon (the three dots at the top right) and choose “Add to Home
             screen.”
+        </p>
+
+        <h2 id="source">Source</h2>
+        <p>
+            If you’re the kind of person who cares about such things, the source code for
+            this little project is on <a href="https://github.com/sjml/gratitude" target="_blank">GitHub</a>.
+        </p>
+        <p>
+            It uses <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>,
+            <a href="https://svelte.dev" target="_blank">Svelte</a>, and
+            <a href="https://www.snowpack.dev/" target="_blank">Snowpack</a>.
         </p>
     </div>
 </div>

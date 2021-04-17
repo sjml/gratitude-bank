@@ -12,3 +12,5 @@ npm run build
 
 cp README.md $ROOT_DIR/dist
 cp LICENSE $ROOT_DIR/dist
+
+node ./scripts/generateAssetList.js

@@ -7,9 +7,11 @@
     import { pd, getClientRectFromMesh } from "./util";
     import { getGratitudeCount, recallGratitude } from "./gratitude";
 
-    // Snowpack's tree-shaking is good enough that we can get away without doing individual imports.
-    //   This way we don't have to track down where every friggin' declaration is. Means the final
-    //   build takes a bit longer, but it's only for production build, so I'll take easier development.
+    // Snowpack's tree-shaking is good enough that we can get
+    //   away without doing individual imports. This way we don't
+    //   have to track down where every friggin' declaration is.
+    //   Means the final build takes a smidge longer, but it's only
+    //   for deployment, so I'll take easier development.
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 
     let initDone = false;
@@ -38,6 +40,9 @@
         "Log.009",
     ];
 
+    // if doing this over again, might make this a store and let the UI
+    //   read it instead of the goofy message passing / rect-reifying
+    //   stuff going on right now.
     enum State {
         Preload = 0,
         Ready = 1,
@@ -139,15 +144,16 @@
                 }
             );
 
+            woodPile.forEach((tgtName: string) => {
+                addAction(tgtName, drawAction);
+            });
+
+
             const summonAction = new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger, () => {
                     setState(State.Summoning);
                 }
             );
-
-            woodPile.forEach((tgtName: string) => {
-                addAction(tgtName, drawAction);
-            });
 
             if (getGratitudeCount() > 0) {
                 addAction("CampfireClickTarget", summonAction);
@@ -285,6 +291,8 @@
                 $inscriptionRect = woodRect;
             }
         }
+        var a = "../dist/assets/campfire/fire.babylon";
+        a.replace(/\.\.\/dist/, ".");
     }
 
     onMount(() => {

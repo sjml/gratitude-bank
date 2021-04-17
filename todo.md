@@ -1,8 +1,4 @@
-1. Offline enable
-    - create service worker
-    - build process hooks in with generated JSON hash for each file
-    - JavaScript template? 
-2. Visual pass
+1. Visual pass
     - UI
         - revamp about text so it goes from title to about with smooth anims
             - title starts over curtain; moves to spot after load; about link fades in
@@ -13,6 +9,7 @@
         - button styling on mobile
         - entering log text on mobile bumps everything to the side; can it be multiline?
         - positioning relative to log is pretty hinky overall...
+            - also check that retain/release buttons position right during resize 
     - smarter text packing into textures
         - the way fitty does it looks pretty simple...
     - better 3d animations
@@ -31,7 +28,9 @@
         - trees and shrubs, little tufts of grass
         - rocks around fire
     - social share card, icon
-3. Stretches
+        - offline manifest
+        - de-privatize repo
+2. Stretches
     - ability to put log back instead of inscribing
     - prompts on wood pile and fire at start
     - fire FX
