@@ -1,16 +1,10 @@
 1. Visual pass
-    - UI
-        - fade in/out instead of popping
-        - add some shadow to text prompt (gets lost in fire)
-        - button styling on mobile
-        - entering log text on mobile bumps everything to the side; can it be multiline?
-        - positioning relative to log is pretty hinky overall...
-            - also check that retain/release buttons position right during resize 
     - smarter text packing into textures
         - the way fitty does it looks pretty simple...
     - better 3d animations
         - note that easing can be done at runtime, if that's simpler for some reason
         - at the same time, make the end-caps on the logs yellow-ish
+        - while we're getting all into the feel of motion, refine the UI animation timings
     - summon FX
         - have smoke come up and it rises out, or something else that looks decent
         - continue rise (release)

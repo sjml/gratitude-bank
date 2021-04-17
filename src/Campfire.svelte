@@ -290,6 +290,14 @@
                 woodRect.left += 8; // accounting for offset shape of wood
                 $inscriptionRect = woodRect;
             }
+            else if (currentState == State.Remembering) {
+                const meshRect = getClientRectFromMesh(
+                                summonDisplay,
+                                scene,
+                                renderCanvas
+                             );
+                $summonRect = meshRect;
+            }
         }
         var a = "../dist/assets/campfire/fire.babylon";
         a.replace(/\.\.\/dist/, ".");
@@ -492,7 +500,7 @@
         pointer-events: none;
 
         background-color: rgb(16, 16, 50);
-        z-index: 50;
+        z-index: 10;
     }
     .curtain.risen {
         opacity: 0.0;

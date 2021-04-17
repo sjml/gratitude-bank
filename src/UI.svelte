@@ -39,7 +39,9 @@
         }
 
         // correcting for iOS's virtual keyboard glitchiness
-        window.scrollTo(0, 0);
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 20);
 
         if (inputValue.length > maxInputLength) {
             // in case any stinkers hack the input field
@@ -95,6 +97,7 @@
         <form on:submit|preventDefault={inscribe}>
             <div class="inscription"
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
+                transition:fade|local
             >
                 <div>What are you grateful for?</div>
                 <input class="type" type="text" maxlength={maxInputLength}
@@ -107,6 +110,7 @@
     {:else if $summonRect != null}
         <div class="remembering"
             style={`top: ${$summonRect.top}px; left: ${$summonRect.left}px; width: ${$summonRect.width}px; height: ${$summonRect.height}px;`}
+            transition:fade|local
         >
             <button on:click={release}>Release</button>
             <button on:click={retain}>Retain</button>
@@ -135,6 +139,7 @@
     }
 
     .header {
+        /* position: absolute; */
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
@@ -196,7 +201,7 @@
     }
 
     .inscription {
-        position: relative;
+        position: absolute;
 
         color: white;
 
@@ -210,13 +215,14 @@
         width: 100%;
 
         font-size: 30px;
-
         text-align: center;
+        text-shadow: 0px 0px 8px black;
     }
 
     .inscription input.type {
         height: 30px;
         width: 90%;
+        max-width: 85vw;
         margin: 5px 0;
 
         font-family: inherit;
@@ -230,12 +236,13 @@
     }
 
     .inscription input.submit, .remembering button {
-        padding: 5px 20px;
+        /* padding: 5px 20px; */
         color: white;
         background-color: rgba(0, 17, 68, 0.8);
         font-size: 20px;
         font-family: inherit;
         border: 2px solid black;
+        -webkit-appearance: none;
 
         opacity: 1;
         transition-property: opacity;
@@ -251,7 +258,7 @@
     }
 
     .remembering {
-        position: relative;
+        position: absolute;
 
         color: white;
 
