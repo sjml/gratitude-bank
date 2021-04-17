@@ -1,10 +1,5 @@
 1. Visual pass
     - smarter text packing into textures
-        - the way fitty does it looks pretty simple...
-    - better 3d animations
-        - note that easing can be done at runtime, if that's simpler for some reason
-        - at the same time, make the end-caps on the logs yellow-ish
-        - while we're getting all into the feel of motion, refine the UI animation timings
     - summon FX
         - have smoke come up and it rises out, or something else that looks decent
         - continue rise (release)
@@ -18,6 +13,7 @@
         - trees and shrubs, little tufts of grass
         - rocks around fire
     - social share card, icon
+        - refine UI animation timings (not a social thing, just a last step before sharing)
         - offline manifest
         - de-privatize repo
 2. Stretches

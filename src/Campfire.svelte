@@ -14,8 +14,6 @@
     //   for deployment, so I'll take easier development.
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 
-    let initDone = false;
-
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
     let engine: BABYLON.Engine = null;
@@ -85,6 +83,7 @@
     }
 
     function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false) {
+        pd("trying to animate", animName, "on", mesh.name);
         let animRange = mesh.getAnimationRange(animName);
         let from: number, to: number;
         if (reverse) {
@@ -125,17 +124,15 @@
             setInscription("");
             setSummonDisplay("");
 
-            if (initDone) {
-                // make sure anim log is in place
-                let animRes = runAnim(animLog, "PresentLog");
-                animRes.animHandle.stop();
-                animRes.animHandle.goToFrame(animRes.animRange.from);
+            // make sure anim log is in place
+            let animRes = runAnim(animLog, "PresentLog");
+            animRes.animHandle.stop();
+            animRes.animHandle.goToFrame(animRes.animRange.from);
 
-                // make sure summon is set below ground
-                animRes = runAnim(summonDisplay, "Summon");
-                animRes.animHandle.stop();
-                animRes.animHandle.goToFrame(animRes.animRange.from);
-            }
+            // make sure summon is set below ground
+            animRes = runAnim(summonDisplay, "Summon");
+            animRes.animHandle.stop();
+            animRes.animHandle.goToFrame(animRes.animRange.from);
 
 
             const drawAction = new BABYLON.ExecuteCodeAction(
@@ -263,7 +260,6 @@
         summonDisplay.material = summonMat;
 
         setState(State.Ready);
-        initDone = true;
 
         engine.runRenderLoop(() => {
             scene.render();

@@ -12,7 +12,7 @@
 ,"indices":[0,1,2,0,3,1]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":4,"indexStart":0,"indexCount":6}]
 ,"instances":[]}
-,{"name":"SummoningDisplay","id":"SummoningDisplay","materialId":"InscriptionMaterial","billboardMode":0,"position":[0.1638,-0.1855,0.0384],"rotation":[0,-0.4197,-1.6279],"scaling":[0.1362,0.3911,0.1362],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"SummoningDisplay","id":"SummoningDisplay","materialId":"InscriptionMaterial","billboardMode":0,"position":[0.1637,-0.1854,0.0383],"rotation":[0,-0.4197,-1.6279],"scaling":[0.1363,0.3912,0.1363],"isVisible":false,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[1,0,-1,-1,0,1,-1,0,-1,1,0,1]
 ,"normals":[0,1,0,0,1,0,0,1,0,0,1,0]
 ,"uvs":[0,0,1,1,0,1,1,0]
@@ -20,29 +20,50 @@
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":4,"indexStart":0,"indexCount":6}]
 ,"animations":[{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1.6414,-1.8325,0.0228]},
-{"frame":60,"values":[3.0416,-0.7522,0.0421]},
-{"frame":150,"values":[3.0359,-0.5821,0.0245]},
-{"frame":160,"values":[0,-1.478,0]},
-{"frame":260,"values":[1.6414,-1.8325,0.0228]},
-{"frame":270,"values":[0,-0.4197,-1.6279]},
-{"frame":335,"values":[0,-0.4197,-1.6279]},
-{"frame":420,"values":[0,-0.4197,-1.6279]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":61,"values":[3.0359,-0.5821,0.0245]},
+{"frame":73,"values":[3.0359,-0.5821,0.0245]},
+{"frame":93,"values":[3.0359,-0.5821,0.0245]},
+{"frame":95,"values":[3.0359,-0.5821,0.0245]},
+{"frame":128,"values":[3.0359,-0.5821,0.0245]},
+{"frame":140,"values":[0,-1.478,0]},
+{"frame":145,"values":[0,-1.478,0]},
+{"frame":176,"values":[0,-1.478,0]},
+{"frame":199,"values":[0,-1.478,0]},
+{"frame":202,"values":[0,-1.478,0]},
+{"frame":250,"values":[1.6414,-1.8325,0.0228]},
+{"frame":260,"values":[0,-0.4197,-1.6279]},
+{"frame":325,"values":[0,-0.4197,-1.6279]},
+{"frame":410,"values":[0,-0.4197,-1.6279]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1.9539,0.7844,0.8219]},
-{"frame":60,"values":[0.7118,0.0636,0.7095]},
-{"frame":150,"values":[-0.4232,0.055,-0.2495]},
-{"frame":160,"values":[1.5048,0.3165,-0.1352]},
-{"frame":260,"values":[1.9539,0.7844,0.8219]},
-{"frame":270,"values":[0.1638,-0.1855,0.0384]},
-{"frame":335,"values":[0.066,0.2405,-0.0052]},
-{"frame":420,"values":[1.2451,0.8971,0.5208]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":61,"values":[0.8685,0.0928,0.6006]},
+{"frame":73,"values":[0.8685,0.0928,0.6006]},
+{"frame":93,"values":[0.544,0.0833,0.387]},
+{"frame":95,"values":[0.544,0.0833,0.387]},
+{"frame":128,"values":[-0.4232,0.055,-0.2495]},
+{"frame":140,"values":[1.5048,0.3165,-0.1352]},
+{"frame":145,"values":[1.5211,0.331,-0.1219]},
+{"frame":176,"values":[1.6402,0.3442,0.3841]},
+{"frame":199,"values":[1.5795,0.3453,0.6665]},
+{"frame":202,"values":[1.5795,0.3453,0.6665]},
+{"frame":250,"values":[1.9539,0.7844,0.8219]},
+{"frame":260,"values":[0.1638,-0.1855,0.0384]},
+{"frame":325,"values":[0.066,0.2405,-0.0052]},
+{"frame":410,"values":[1.2451,0.8971,0.5208]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1,1,1]},
-{"frame":60,"values":[1,1,1]},
-{"frame":150,"values":[1,1,1]},
-{"frame":160,"values":[1,1,1]},
-{"frame":260,"values":[1,1,1]},
-{"frame":270,"values":[0.1362,0.3911,0.1362]},
-{"frame":335,"values":[0.2212,0.635,0.2212]},
-{"frame":420,"values":[0.3484,1,0.3484]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"PlaceLog","from":0,"to":150},{"name":"PresentLog","from":160,"to":260},{"name":"Summon","from":270,"to":420}]
+{"frame":61,"values":[1,1,1]},
+{"frame":73,"values":[1,1,1]},
+{"frame":93,"values":[1,1,1]},
+{"frame":95,"values":[1,1,1]},
+{"frame":128,"values":[1,1,1]},
+{"frame":140,"values":[1,1,1]},
+{"frame":145,"values":[1,1,1]},
+{"frame":176,"values":[1,1,1]},
+{"frame":199,"values":[1,1,1]},
+{"frame":202,"values":[1,1,1]},
+{"frame":250,"values":[1,1,1]},
+{"frame":260,"values":[0.1362,0.3911,0.1362]},
+{"frame":325,"values":[0.2212,0.635,0.2212]},
+{"frame":410,"values":[0.3484,1,0.3484]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"PlaceLog","from":0,"to":128},{"name":"PresentLog","from":140,"to":250},{"name":"Summon","from":260,"to":410}]
 ,"instances":[]}
 ,{"name":"Log.001","id":"Log.001","materialId":"BrownWood","billboardMode":0,"position":[0.1804,0.2614,-0.0032],"rotation":[0,0,-0.9085],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.3099,0.0908,-0.0074,-0.3473,0.1004,0.0663,-0.3523,0.0112,0.0252,-0.3099,0.0908,-0.0074,-0.3523,0.0112,0.0252,-0.374,0.0478,-0.0745,0.3148,0.0854,-0.0161,0.372,0.0215,-0.0546,0.3693,0.005,0.0244,0.372,0.0215,-0.0546,0.1151,0.0308,-0.0422,-0.0353,0.0325,0.0275,-0.3099,0.0908,-0.0074,-0.374,0.0478,-0.0745,-0.3395,0.1482,-0.0777,0.3148,0.0854,-0.0161,0.3706,0.1582,0.0006
@@ -69,7 +90,7 @@
 ,102,103,104,105,106,107,108,109,110,111,112,113]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":114,"indexStart":0,"indexCount":114}]
 ,"instances":[{"name":"Log.002","position":[-0.2964,0.3663,-0.0032],"rotation":[0,0,-2.3034],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.003","position":[0.0146,0.3471,0.3078],"rotation":[0,1.5561,-2.3034],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.004","position":[0.0179,0.3471,-0.3142],"rotation":[0,-1.6199,-2.3034],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.005","position":[1.4523,0.0207,-0.1185],"rotation":[0.9317,1.6678,0.0056],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.006","position":[1.5879,0.0249,-0.1311],"rotation":[-0.9767,-1.461,0.0247],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.007","position":[1.5943,0.1154,-0.1317],"rotation":[0,1.6706,0],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.008","position":[1.435,0.1287,-0.1169],"rotation":[0,-1.4643,0],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true},{"name":"Log.009","position":[1.3869,-0.0011,-0.1124],"rotation":[0,1.6706,0],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true}]}
-,{"name":"AnimLog","id":"AnimLog","materialId":"BrownWood","billboardMode":0,"position":[1.5048,0.3165,-0.1352],"rotation":[0,-1.478,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"AnimLog","id":"AnimLog","materialId":"BrownWood","billboardMode":0,"position":[1.9539,0.7844,0.8219],"rotation":[1.6414,-1.8325,0.0228],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[-0.3122,-0.0301,0.0049,-0.347,-0.0709,0.0182,-0.3519,-0.073,-0.0713,-0.3122,-0.0301,0.0049,-0.3519,-0.073,-0.0713,-0.3803,0.0282,-0.0444,0.3106,0.0197,-0.0013,0.3655,0.0555,-0.0686,0.3681,-0.0247,-0.0775,0.3655,0.0555,-0.0686,0.1099,0.027,-0.0582,-0.0355,-0.0521,-0.0498,-0.3122,-0.0301,0.0049,-0.3803,0.0282,-0.0444,-0.3468,0.0432,0.0552,0.3106,0.0197,-0.0013,0.3669,0.0137,0.0727
 ,0.3677,0.0549,0.0469,0.3669,0.0137,0.0727,0.0807,-0.0234,0.0556,0.3677,0.0549,0.0469,0.0807,-0.0234,0.0556,-0.3697,-0.0695,0.067,-0.3525,-0.016,0.0778,-0.0026,0.0452,0.0418,0.3677,0.0549,0.0469,-0.0008,0.0095,0.0488,-0.3525,-0.016,0.0778,-0.0026,0.0452,0.0418,-0.0008,0.0095,0.0488,0.3106,0.0197,-0.0013,0.3681,-0.0247,-0.0775,0.3717,-0.0377,-0.0017,0.3106,0.0197,-0.0013
 ,0.3441,0.0784,-0.0199,0.3655,0.0555,-0.0686,0.1099,0.027,-0.0582,0.3655,0.0555,-0.0686,0.3441,0.0784,-0.0199,0.3106,0.0197,-0.0013,0.3677,0.0549,0.0469,0.3441,0.0784,-0.0199,0.3441,0.0784,-0.0199,-0.0026,0.0452,0.0418,-0.3468,0.0432,0.0552,-0.3122,-0.0301,0.0049,-0.3525,-0.016,0.0778,-0.3697,-0.0695,0.067,0.3106,0.0197,-0.0013,0.3702,-0.0436,0.0516,0.3669,0.0137,0.0727
@@ -91,29 +112,50 @@
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":90,"indexStart":0,"indexCount":90}]
 ,"animations":[{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1.6414,-1.8325,0.0228]},
-{"frame":60,"values":[3.0416,-0.7522,0.0421]},
-{"frame":150,"values":[3.0359,-0.5821,0.0245]},
-{"frame":160,"values":[0,-1.478,0]},
-{"frame":260,"values":[1.6414,-1.8325,0.0228]},
-{"frame":270,"values":[0,-0.4197,-1.6279]},
-{"frame":335,"values":[0,-0.4197,-1.6279]},
-{"frame":420,"values":[0,-0.4197,-1.6279]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":61,"values":[3.0359,-0.5821,0.0245]},
+{"frame":73,"values":[3.0359,-0.5821,0.0245]},
+{"frame":93,"values":[3.0359,-0.5821,0.0245]},
+{"frame":95,"values":[3.0359,-0.5821,0.0245]},
+{"frame":128,"values":[3.0359,-0.5821,0.0245]},
+{"frame":140,"values":[0,-1.478,0]},
+{"frame":145,"values":[0,-1.478,0]},
+{"frame":176,"values":[0,-1.478,0]},
+{"frame":199,"values":[0,-1.478,0]},
+{"frame":202,"values":[0,-1.478,0]},
+{"frame":250,"values":[1.6414,-1.8325,0.0228]},
+{"frame":260,"values":[0,-0.4197,-1.6279]},
+{"frame":325,"values":[0,-0.4197,-1.6279]},
+{"frame":410,"values":[0,-0.4197,-1.6279]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1.9539,0.7844,0.8219]},
-{"frame":60,"values":[0.7118,0.0636,0.7095]},
-{"frame":150,"values":[-0.4232,0.055,-0.2495]},
-{"frame":160,"values":[1.5048,0.3165,-0.1352]},
-{"frame":260,"values":[1.9539,0.7844,0.8219]},
-{"frame":270,"values":[0.1638,-0.1855,0.0384]},
-{"frame":335,"values":[0.066,0.2405,-0.0052]},
-{"frame":420,"values":[1.2451,0.8971,0.5208]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":61,"values":[0.8685,0.0928,0.6006]},
+{"frame":73,"values":[0.8685,0.0928,0.6006]},
+{"frame":93,"values":[0.544,0.0833,0.387]},
+{"frame":95,"values":[0.544,0.0833,0.387]},
+{"frame":128,"values":[-0.4232,0.055,-0.2495]},
+{"frame":140,"values":[1.5048,0.3165,-0.1352]},
+{"frame":145,"values":[1.5211,0.331,-0.1219]},
+{"frame":176,"values":[1.6402,0.3442,0.3841]},
+{"frame":199,"values":[1.5795,0.3453,0.6665]},
+{"frame":202,"values":[1.5795,0.3453,0.6665]},
+{"frame":250,"values":[1.9539,0.7844,0.8219]},
+{"frame":260,"values":[0.1638,-0.1855,0.0384]},
+{"frame":325,"values":[0.066,0.2405,-0.0052]},
+{"frame":410,"values":[1.2451,0.8971,0.5208]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":60,"keys":[
 {"frame":1,"values":[1,1,1]},
-{"frame":60,"values":[1,1,1]},
-{"frame":150,"values":[1,1,1]},
-{"frame":160,"values":[1,1,1]},
-{"frame":260,"values":[1,1,1]},
-{"frame":270,"values":[0.1362,0.3911,0.1362]},
-{"frame":335,"values":[0.2212,0.635,0.2212]},
-{"frame":420,"values":[0.3484,1,0.3484]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"PlaceLog","from":0,"to":150},{"name":"PresentLog","from":160,"to":260},{"name":"Summon","from":270,"to":420}]
+{"frame":61,"values":[1,1,1]},
+{"frame":73,"values":[1,1,1]},
+{"frame":93,"values":[1,1,1]},
+{"frame":95,"values":[1,1,1]},
+{"frame":128,"values":[1,1,1]},
+{"frame":140,"values":[1,1,1]},
+{"frame":145,"values":[1,1,1]},
+{"frame":176,"values":[1,1,1]},
+{"frame":199,"values":[1,1,1]},
+{"frame":202,"values":[1,1,1]},
+{"frame":250,"values":[1,1,1]},
+{"frame":260,"values":[0.1362,0.3911,0.1362]},
+{"frame":325,"values":[0.2212,0.635,0.2212]},
+{"frame":410,"values":[0.3484,1,0.3484]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"PlaceLog","from":0,"to":128},{"name":"PresentLog","from":140,"to":250},{"name":"Summon","from":260,"to":410}]
 ,"instances":[{"name":"AnimLogProxy","position":[1.5048,0.3165,-0.1352],"rotation":[0,-1.478,0],"scaling":[1,1,1],"freezeWorldMatrix":false,"tags":"","checkCollisions":false,"pickable":true}]}
 ,{"name":"InscriptionSurface","id":"InscriptionSurface","parentId":"AnimLog","materialId":"InscriptionMaterial","billboardMode":0,"position":[0,0,0],"rotation":[0,0,0],"scaling":[1,1,1],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[0.3681,-0.0247,-0.0775,-0.0355,-0.0521,-0.0498,0.0807,-0.0234,0.0556,-0.0355,-0.0521,-0.0498,-0.3519,-0.073,-0.0713,-0.347,-0.0709,0.0182,-0.347,-0.0709,0.0182,-0.3697,-0.0695,0.067,-0.0355,-0.0521,-0.0498,-0.3697,-0.0695,0.067,0.0807,-0.0234,0.0556,-0.0355,-0.0521,-0.0498,0.0807,-0.0234,0.0556,0.3702,-0.0436,0.0516,0.3717,-0.0377,-0.0017,0.3717,-0.0377,-0.0017,0.3681,-0.0247,-0.0775
