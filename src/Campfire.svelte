@@ -222,7 +222,7 @@
     }
 
     async function init() {
-        engine = new BABYLON.Engine(renderCanvas, true, {disableWebGL2Support: true});
+        engine = new BABYLON.Engine(renderCanvas, true);
 
         const pixelRatio = window.devicePixelRatio;
         engine.setHardwareScalingLevel(1.0 / pixelRatio);

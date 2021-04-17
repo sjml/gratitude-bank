@@ -1,24 +1,14 @@
 <script>
-    import { createEventDispatcher } from "svelte";
     import { fade } from "svelte/transition";
-
-    const dispatch = createEventDispatcher();
 </script>
 
 <div class="about"
     transition:fade|local
 >
-    <!-- <div class="nav">
-        <div class="close" on:click={() => dispatch("closed")}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><path d="M128,24A104,104,0,1,0,232,128,104.12041,104.12041,0,0,0,128,24Zm37.65625,130.34375a7.99915,7.99915,0,1,1-11.3125,11.3125L128,139.3125l-26.34375,26.34375a7.99915,7.99915,0,0,1-11.3125-11.3125L116.6875,128,90.34375,101.65625a7.99915,7.99915,0,0,1,11.3125-11.3125L128,116.6875l26.34375-26.34375a7.99915,7.99915,0,0,1,11.3125,11.3125L139.3125,128Z"></path></svg>
-        </div>
-    </div> -->
-
     <div class="aboutContent">
         <h1>Gratitude Bank</h1>
         <p class="attribution">by <a href="https://shaneliesegang.com" target="_blank">Shane Liesegang, SJ</a></p>
 
-        <h2 id="why-gratitude">Why Gratitude?</h2>
         <p>
             This is a tool meant to help you cultivate a sense of gratitude, and to remind
             you of the things in your life which draw you towards it. It only puts out
@@ -26,16 +16,23 @@
             gratitude.
         </p>
         <p>
+            Let me know what you think of it, especially if you like it or end up using it! The
+            easiest way to reach out is my public-facing Twitter profile, <a href="https://twitter.com/OptimistPanda"
+            target="_blank">@OptimistPanda</a>.
+        </p>
+
+        <h2 id="why-gratitude">Why Gratitude?</h2>
+        <p>
             While my motivation for building this comes from my spiritual practices, there
             is nothing specifically religious about it, so if you are not inclined in that
             direction, you may still find something of value here.
         </p>
         <p>
-            When I was a <a href="https://beajesuit.org/jesuit-formation/the-novitiate/" target="_blank">
-            Jesuit novice</a>, my spiritual director was fond of reminding us to
-            “go to gratitude” when faced with some challenge or spiritual bump in the
-            road. It’s part of <a href="https://www.ignatianspirituality.com/ignatian-prayer/the-examen/" target="_blank">
-            the twice-daily prayer practice of Jesuits</a> to review our
+            When I was a <a href="https://beajesuit.org/jesuit-formation/the-novitiate/"
+            target="_blank">Jesuit novice</a>, my spiritual director was fond of reminding
+            us to “go to gratitude” when faced with some challenge or spiritual bump in the
+            road. It’s part of <a href="https://www.ignatianspirituality.com/ignatian-prayer/the-examen/"
+            target="_blank"> the twice-daily prayer practice of Jesuits</a> to review our
             thoughts, words, and actions in a methodical fashion, starting with gratitude
             for all our experiences. The reflection on gratitude is a crucial step,
             possibly the key to the entire experience of Ignatian spirituality.
@@ -51,13 +48,15 @@
         </p>
 
         <div>
-            Things you might want to remember...
+            Things you might be grateful for...
             <ul>
-                <li>The morning light hitting Bell Rock in Sedona</li>
+                <li>The morning light hitting Cathedral Rock in Sedona</li>
                 <li>Strawberry Danishes</li>
                 <li>The way my cat looks embarrassed when she misses a jump</li>
                 <li>My friend Sarah</li>
                 <li>January 23, 2006</li>
+                <li>That smell in the early morning after it rains</li>
+                <li>The growth I’ve had in therapy</li>
                 <li>Sitting on the porch with grandpa</li>
                 <li>Road trips</li>
                 <li>The sea</li>
@@ -77,32 +76,41 @@
 
         <h2 id="privacy">Privacy</h2>
         <p>
-            Nothing ever leaves your browser. There’s no login necessary because nothing
-            is stored on any servers. I don’t need (nor want) to see what you are grateful
-            for; that’s between you and the fire.
+            No information ever leaves your computer or phone. There’s no login necessary because
+            nothing is stored on any servers. I don’t need (nor do I want) to see what you are
+            grateful for; that’s between you and the fire.
         </p>
         <p>
             The downside of that, though, is that I store the items locally on your
             browser. That means that if you clear the cache (or don’t visit the site for a
-            while), it may lose your data. That might make you sad, and that’s the last
+            while), it may lose your data. That could make you sad, and that’s the last
             thing I want!
         </p>
         <p>
             The way to avoid that is to add this page to the home screen of your phone. On
-            iOS, tap the “Share” button and select “Add to Home Screen.” On Android, tap
-            the menu icon (the three dots at the top right) and choose “Add to Home
-            screen.”
+            iOS, tap the “Share” button (the little box with the arrow coming up) and select
+            “Add to Home Screen.” On Android, tap the menu icon (the three dots at the top right)
+            and choose “Add to Home screen.”
         </p>
 
-        <h2 id="source">Source</h2>
+        <h2 id="source">Source Code</h2>
         <p>
             If you’re the kind of person who cares about such things, the source code for
-            this little project is on <a href="https://github.com/sjml/gratitude" target="_blank">GitHub</a>.
+            this little project is on <a href="https://github.com/sjml/gratitude-bank"
+            target="_blank">GitHub</a>.
         </p>
         <p>
             It uses <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>,
             <a href="https://svelte.dev" target="_blank">Svelte</a>, and
             <a href="https://www.snowpack.dev/" target="_blank">Snowpack</a>.
+        </p>
+
+        <h2 class="future">Future</h2>
+        <p>
+            I consider this to be mostly done, unless some big glaring bug is found. I may come
+            back and do more visual polish at some point... I am not a 3D artist (nor even much
+            of a 2D artist) and it kinda shows. I hope my earnestness makes up for my lack of
+            skill.
         </p>
     </div>
 </div>

@@ -1,16 +1,18 @@
 1. Visual pass
     - smarter text packing into textures
+    - fire FX
+        - try to simplify it to see if you can keep the CPU from dying
+        - moving light
+        - sparks coming off
+        - little moving globules
+        - die down when gratitude count is 0
     - summon FX
         - have smoke come up and it rises out, or something else that looks decent
         - continue rise (release)
         - fall back in (retain)
-    - fire FX
-        - moving light
-        - sparks coming off
-        - little moving globules
     - environment
         - lighting, sky, colors
-        - trees and shrubs, little tufts of grass
+        - trees and shrubs, little tufts of grasss
         - rocks around fire
     - social share card, icon
         - refine UI animation timings (not a social thing, just a last step before sharing)

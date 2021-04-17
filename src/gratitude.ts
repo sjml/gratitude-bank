@@ -1,3 +1,5 @@
+import { pd } from "./util";
+
 export type Gratitude = {
     text: string,
     storedOn: number,
@@ -70,6 +72,7 @@ export function recallGratitude() : Gratitude {
 
     localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
 
+    pd("recalling gratitude:", gratitude[0]);
     return gratitude[0];
 }
 
