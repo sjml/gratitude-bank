@@ -1,0 +1,2 @@
+AddType application/json .babylon
+AddType text/plain .fx
