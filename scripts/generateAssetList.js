@@ -5,8 +5,9 @@ const crypto = require("crypto");
 // build directory relative to project root
 const readDirectory = "./dist/";
 const exclusions = [
-  /\/\.DS_Store$/,
-  /^\.\/service-worker\.js$/,
+  /\.DS_Store$/,
+  /\.htaccess$/,
+  /^service-worker\.js$/,
 ];
 
 const templateFile = `${readDirectory}service-worker.js`;
@@ -57,7 +58,8 @@ async function main() {
   const before = template.substr(0, template.indexOf(startSentinel));
   const after = template.substr(template.indexOf(endSentinel) + endSentinel.length);
 
-  const output = `${before}\nconst assetList = ${JSON.stringify(assets, Object.keys(assets).sort(), 2)};\n${after}`;
+  const updateTimeStamp = new Date();
+  const output = `${before}\n// Updated: ${updateTimeStamp.toISOString()}\n//   (${updateTimeStamp})\nconst assetList = ${JSON.stringify(assets, Object.keys(assets).sort(), 2)};\n${after}`;
 
   fs.writeFileSync(templateFile, output);
 }
