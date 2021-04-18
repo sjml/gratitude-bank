@@ -1,9 +1,7 @@
 1. Visual pass
     - smarter text packing into textures
     - summon FX
-        - have smoke come up and it rises out, or something else that looks decent
-        - continue rise (release)
-        - fall back in (retain)
+        - basic effects in; give them some pizzazz
     - environment
         - lighting, sky, colors
         - trees and shrubs, little tufts of grasss

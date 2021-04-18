@@ -4,7 +4,7 @@
     import {
         inscriptionRect, inscriptionQueue,
         summonRect, currentGratitude, summonResolution } from "./stores";
-    import { pd, getClientRectFromMesh } from "./util";
+    import { pd, getClientRectFromMesh, lerp } from "./util";
     import { getGratitudeCount, recallGratitude } from "./gratitude";
 
     // Snowpack's tree-shaking is good enough that we can get
@@ -13,6 +13,12 @@
     //   Means the final build takes a smidge longer, but it's only
     //   for deployment, so I'll take easier development.
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
+
+    type AnimData = {
+        animHandle: BABYLON.Animatable,
+        animRange: BABYLON.AnimationRange
+    }
+
 
     let loadingDone = false;
     let renderCanvas: HTMLCanvasElement;
@@ -26,9 +32,11 @@
 
     let summonDisplay: BABYLON.Mesh = null;
     let summonTexture: BABYLON.DynamicTexture = null
+    let summonAnimData: AnimData = null;
     const summonTextureDimensions = {width: 2048, height: 2048};
 
     let startTimeStampMS: number = 0;
+    let elapsedSeconds: number = 0;
     let fireLight: BABYLON.PointLight = null;
 
     const woodPile = [
@@ -85,24 +93,20 @@
         }
     }
 
-    function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false) {
+    function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false): AnimData {
         pd("trying to animate", animName, "on", mesh.name);
-        let animRange = mesh.getAnimationRange(animName);
-        let from: number, to: number;
+        let animRange = mesh.getAnimationRange(animName).clone();
         if (reverse) {
-            [from, to] = [animRange.to, animRange.from];
-        }
-        else {
-            [to, from] = [animRange.to, animRange.from];
+            [animRange.from, animRange.to] = [animRange.to, animRange.from];
         }
         let animHandle = scene.beginAnimation(
             mesh, // target
-            from, to, // range
+            animRange.from, animRange.to, // range
             false, // loop
             1.0, // speed ratio
             callback,
         );
-        return {animHandle, animRange: {from, to}};
+        return {animHandle, animRange};
     }
 
     async function setState(newState: State) {
@@ -126,6 +130,7 @@
             // reset displays
             setInscription("");
             setSummonDisplay("");
+            summonAnimData = null;
 
             // make sure anim log is in place
             let animRes = runAnim(animLog, "PresentLog");
@@ -190,10 +195,11 @@
 
             setSummonDisplay($currentGratitude.text);
 
-            runAnim(summonDisplay, "Summon", () => setState(State.Remembering));
+            summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Remembering));
         }
 
         else if (currentState == State.Remembering) {
+            summonAnimData = null;
             const meshRect = getClientRectFromMesh(
                                 summonDisplay,
                                 scene,
@@ -204,7 +210,7 @@
 
         else if (currentState == State.Retaining) {
             $summonRect = null;
-            runAnim(summonDisplay, "Summon", () => setState(State.Ready), true);
+            summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Ready), true);
         }
 
         else if (currentState == State.Releasing) {
@@ -226,7 +232,6 @@
 
     async function init() {
         engine = new BABYLON.Engine(renderCanvas, true);
-        startTimeStampMS = new Date().getTime();
 
         const pixelRatio = window.devicePixelRatio;
         engine.setHardwareScalingLevel(1.0 / pixelRatio);
@@ -236,6 +241,10 @@
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
+        startTimeStampMS = new Date().getTime();
+        scene.registerBeforeRender(() => {
+            elapsedSeconds = (startTimeStampMS - new Date().getTime()) / 1000;
+        });
 
         // setup inscription surface
         animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
@@ -248,22 +257,42 @@
         inscMat.albedoTexture = inscriptionTexture;
 
 
-        // setup summoning render surface
+        // setup summoning rendering
         summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
 
-        const summonMat = new BABYLON.StandardMaterial("SummonMaterial", scene);
+        const summonMat = new BABYLON.ShaderMaterial("SummonMaterial", scene,
+            "./assets/campfire/shaders/summon",
+            {
+                attributes: ["position", "uv"],
+                uniforms: ["worldViewProjection", "elapsedTime", "comp"],
+                needAlphaBlending: true,
+            }
+        );
+        scene.registerBeforeRender(() => {
+            summonMat.setFloat("elapsedTime", elapsedSeconds);
+            // HACKHACK
+            if ((currentState == State.Summoning) && summonAnimData != null) {
+                const currFrame = summonAnimData.animHandle.masterFrame;
+                const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
+                summonMat.setFloat("comp", comp);
+            }
+            else if (currentState == State.Retaining && summonAnimData != null) {
+                const currFrame = summonAnimData.animHandle.masterFrame;
+                const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
+                summonMat.setFloat("comp", 1.0 - comp);
+            }
+        });
         summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
-        summonMat.emissiveTexture = summonTexture;
-        summonMat.disableLighting = true;
+        summonTexture.hasAlpha = true;
+        summonMat.setTexture("textSampler", summonTexture);
         summonDisplay.material = summonMat;
 
 
         // setup fire light animation
         fireLight = scene.getLightByName("FireLight") as BABYLON.PointLight;
         scene.registerBeforeRender(() => {
-            const elapsed = (new Date().getTime() - startTimeStampMS) / 1000;
             const rate = 1;
-            const x = rate * elapsed;
+            const x = rate * elapsedSeconds;
 
             // kinda ad-hoc fire movement/flickering made by screwing around in Desmos
             //  until it looked ok. works fine; could be better.
@@ -280,6 +309,7 @@
                     Math.cos(x * 1.2)
                 )
              * .05;
+
              fireLight.position.z =
                 Math.cos(x) * 0.04;
         });
@@ -411,8 +441,7 @@
 
     function setSummonDisplay(inputString: string) {
         const ctx = summonTexture.getContext();
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, summonTextureDimensions.width, summonTextureDimensions.height);
+        ctx.clearRect(0, 0, summonTextureDimensions.width, summonTextureDimensions.height);
 
         const maxWidth = summonTextureDimensions.width * 0.9;
         const widthGrace = 100; // canvas will do some squishing automatically,
@@ -421,7 +450,7 @@
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "#ffffff";
         ctx.font = `bold ${baseFontSize}px 'Amatic_SC', sans-serif`;
 
         inputString = inputString.trim();
