@@ -1,0 +1,159 @@
+Exporter version: 2.91-alpha, Blender version: 2.92.0
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used :
+		Inline textures     :  false
+		Material Type       :  PBR
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		Keep Z-up r-handed  :  no
+		Texture directory   :  /Users/shane/Projects/gratitude/public/assets/campfire/
+	Python World class constructor completed
+	processing begun of mesh:  SummoningDisplay
+		animation processing begun
+			processing action PlaceLog:  in[1 - 128], out[0 - 128]
+			processing action PresentLog:  in[0 - 110], out[140 - 250]
+			processing action Summon:  in[0 - 150], out[260 - 410]
+		processing begun of material:  InscriptionMaterial
+		num positions      :  4
+		num normals        :  4
+		num tangents       :  0
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  2
+	processing begun of mesh:  TreeTrunk.001
+		processing begun of material:  BrownWood
+		num positions      :  114
+		num normals        :  114
+		num tangents       :  0
+		num uvs            :  228
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  38
+	processing begun of mesh:  TreeTrunk.002
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  TreeTrunk.003
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  TreeTrunk.004
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Ground
+		processing begun of material:  Grass
+		num positions      :  4
+		num normals        :  4
+		num tangents       :  0
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  2
+	processing begun of mesh:  TreeTrunk.005
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  TreeTrunk.006
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  TreeTrunk.007
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of camera (UniversalCamera):  Camera
+	processing begun of mesh:  Log.001
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.002
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.003
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.004
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Rock.001
+		processing begun of material:  Material.001
+		num positions      :  60
+		num normals        :  60
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  20
+	processing begun of mesh:  Rock.002
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.003
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.004
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.005
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.006
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.007
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.008
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.009
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.010
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.011
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.012
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.013
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.014
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.015
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.016
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.017
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.018
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.019
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Rock.020
+		mesh is an instance of :  Rock.001.  Processing halted.
+	processing begun of mesh:  Log.005
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.006
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.007
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.008
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  Log.009
+		mesh is an instance of :  TreeTrunk.001.  Processing halted.
+	processing begun of mesh:  AnimLog
+		animation processing begun
+			processing action PlaceLog:  in[1 - 128], out[0 - 128]
+			processing action PresentLog:  in[0 - 110], out[140 - 250]
+			processing action Summon:  in[0 - 150], out[260 - 410]
+		processing begun of material:  BrownWood
+		registered as also a user of material:  BrownWood
+		num positions      :  90
+		num normals        :  90
+		num tangents       :  0
+		num uvs            :  180
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  30
+	processing begun of mesh:  InscriptionSurface
+		processing begun of material:  InscriptionMaterial
+		registered as also a user of material:  InscriptionMaterial
+		num positions      :  18
+		num normals        :  18
+		num tangents       :  0
+		num uvs            :  36
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  6
+	processing begun of mesh:  AnimLogProxy
+		mesh is an instance of :  AnimLog.  Processing halted.
+	processing begun of node:  CampfireBB
+========= Writing of JSON file started =========
+	writing mesh:  SummoningDisplay
+	writing mesh:  TreeTrunk.001
+	writing mesh:  Ground
+	writing mesh:  Rock.001
+	writing mesh:  AnimLog
+	writing mesh:  InscriptionSurface
+========= Writing of JSON file completed =========
+========= end of processing =========
+elapsed time:  0 min, 0.1019 secs

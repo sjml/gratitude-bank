@@ -1,9 +1,12 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
 
+    import { State } from "./types";
     import {
+        currentState, gratitudeCount,
+        woodPileRect,
         inscriptionRect, inscriptionQueue,
-        summonRect, currentGratitude, summonResolution } from "./stores";
+        summonRect, currentGratitude, summonResolution, woodPileReturnSignal } from "./stores";
     import { pd, getClientRectFromMesh, lerp } from "./util";
     import { getGratitudeCount, recallGratitude } from "./gratitude";
 
@@ -49,24 +52,6 @@
         "Log.009",
     ];
 
-    // if doing this over again, might make this a store and let the UI
-    //   read it instead of the goofy message passing / rect-reifying
-    //   stuff going on right now.
-    enum State {
-        Preload = 0,
-        Ready = 1,
-        Drawing = 2,
-        Scribing = 3,
-        Contemplating = 4,
-        Placing = 5,
-        Summoning = 6,
-        Remembering = 7,
-        Retaining = 8,
-        Releasing = 9,
-    }
-    let currentState: State = State.Preload;
-
-
     function addAction(meshName: string, action: BABYLON.Action) {
         const tgtMesh = scene.getMeshByName(meshName);
         if (tgtMesh == null) {
@@ -93,6 +78,31 @@
         }
     }
 
+    function updateMeshRects() {
+        pd("updating meshes");
+        const woodRect = getClientRectFromMesh(
+                                animLog,
+                                scene,
+                                renderCanvas
+                            );
+        woodRect.left += 8; // accounting for offset shape of wood
+        $inscriptionRect = woodRect;
+
+        const sRect = getClientRectFromMesh(
+                                summonDisplay,
+                                scene,
+                                renderCanvas
+                            );
+        $summonRect = sRect;
+
+        const wpRect = getClientRectFromMesh(
+                                scene.getMeshByName("AnimLogProxy") as BABYLON.Mesh,
+                                scene,
+                                renderCanvas
+                           );
+        $woodPileRect = wpRect;
+    }
+
     function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false): AnimData {
         pd("trying to animate", animName, "on", mesh.name);
         let animRange = mesh.getAnimationRange(animName).clone();
@@ -109,15 +119,21 @@
         return {animHandle, animRange};
     }
 
+    function initialRectSet() {
+        if ($inscriptionRect == null || isNaN($inscriptionRect.width) || $inscriptionRect.width == 0) {
+            updateMeshRects();
+        }
+        else {
+            scene.unregisterBeforeRender(initialRectSet);
+        }
+    }
+
     async function setState(newState: State) {
         pd("Setting state:", State[newState]);
-        currentState = newState;
+        $currentState = newState;
 
         // disable opening click targets if not in Ready state
-        if (currentState !== State.Ready) {
-            $inscriptionRect = null;
-            $summonRect = null;
-
+        if ($currentState !== State.Ready) {
             woodPile.forEach((tgtName: string) => {
                 clearActions(tgtName);
             });
@@ -126,7 +142,7 @@
         }
 
         // handle state transitions
-        if (currentState == State.Ready) {
+        if ($currentState == State.Ready) {
             // reset displays
             setInscription("");
             setSummonDisplay("");
@@ -142,6 +158,7 @@
             animRes.animHandle.stop();
             animRes.animHandle.goToFrame(animRes.animRange.from);
 
+            updateMeshRects();
 
             const drawAction = new BABYLON.ExecuteCodeAction(
                 BABYLON.ActionManager.OnPickTrigger, () => {
@@ -165,32 +182,29 @@
             }
         }
 
-        else if (currentState == State.Drawing) {
+        else if ($currentState == State.Drawing) {
             runAnim(animLog, "PresentLog", () => setState(State.Scribing));
         }
 
-        else if (currentState == State.Scribing) {
-            const woodRect = getClientRectFromMesh(
-                                animLog,
-                                scene,
-                                renderCanvas
-                             );
-            woodRect.left += 8; // accounting for offset shape of wood
-            $inscriptionRect = woodRect;
+        else if ($currentState == State.Scribing) {
+            updateMeshRects();
         }
 
-        else if (currentState == State.Contemplating) {
-            $inscriptionRect = null;
+        else if ($currentState == State.Returning) {
+            runAnim(animLog, "PresentLog", () => setState(State.Ready), true);
+        }
+
+        else if ($currentState == State.Contemplating) {
             setTimeout(() => {
                 setState(State.Placing);
             }, 1500);
         }
 
-        else if (currentState == State.Placing) {
+        else if ($currentState == State.Placing) {
             runAnim(animLog, "PlaceLog", () => setState(State.Ready));
         }
 
-        else if (currentState == State.Summoning) {
+        else if ($currentState == State.Summoning) {
             $currentGratitude = recallGratitude();
 
             setSummonDisplay($currentGratitude.text);
@@ -198,23 +212,16 @@
             summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Remembering));
         }
 
-        else if (currentState == State.Remembering) {
+        else if ($currentState == State.Remembering) {
             summonAnimData = null;
-            const meshRect = getClientRectFromMesh(
-                                summonDisplay,
-                                scene,
-                                renderCanvas
-                             );
-            $summonRect = meshRect;
+            updateMeshRects();
         }
 
-        else if (currentState == State.Retaining) {
-            $summonRect = null;
+        else if ($currentState == State.Retaining) {
             summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Ready), true);
         }
 
-        else if (currentState == State.Releasing) {
-            $summonRect = null;
+        else if ($currentState == State.Releasing) {
             setState(State.Ready);
         }
     }
@@ -231,6 +238,8 @@
     }
 
     async function init() {
+        $gratitudeCount = getGratitudeCount();
+
         engine = new BABYLON.Engine(renderCanvas, true);
 
         const pixelRatio = window.devicePixelRatio;
@@ -245,6 +254,17 @@
         scene.registerBeforeRender(() => {
             elapsedSeconds = (startTimeStampMS - new Date().getTime()) / 1000;
         });
+
+        // environment setup
+        scene.fogEnabled = true;
+        scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+        scene.fogColor = new BABYLON.Color3(
+            scene.clearColor.r,
+            scene.clearColor.g,
+            scene.clearColor.b,
+        );
+        scene.fogStart = 4.0;
+        scene.fogEnd = 10.0;
 
         // setup inscription surface
         animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
@@ -271,12 +291,12 @@
         scene.registerBeforeRender(() => {
             summonMat.setFloat("elapsedTime", elapsedSeconds);
             // HACKHACK
-            if ((currentState == State.Summoning) && summonAnimData != null) {
+            if (($currentState == State.Summoning) && summonAnimData != null) {
                 const currFrame = summonAnimData.animHandle.masterFrame;
                 const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
                 summonMat.setFloat("comp", comp);
             }
-            else if (currentState == State.Retaining && summonAnimData != null) {
+            else if ($currentState == State.Retaining && summonAnimData != null) {
                 const currFrame = summonAnimData.animHandle.masterFrame;
                 const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
                 summonMat.setFloat("comp", 1.0 - comp);
@@ -327,6 +347,7 @@
         secretCube.material = invisibleMaterial;
 
 
+        scene.registerBeforeRender(initialRectSet);
 
         setState(State.Ready);
 
@@ -346,23 +367,7 @@
     function handleResize() {
         if (engine !== null) {
             engine.resize();
-            if (currentState == State.Scribing) {
-                const woodRect = getClientRectFromMesh(
-                                    animLog,
-                                    scene,
-                                    renderCanvas
-                                 );
-                woodRect.left += 8; // accounting for offset shape of wood
-                $inscriptionRect = woodRect;
-            }
-            else if (currentState == State.Remembering) {
-                const meshRect = getClientRectFromMesh(
-                                summonDisplay,
-                                scene,
-                                renderCanvas
-                             );
-                $summonRect = meshRect;
-            }
+            updateMeshRects();
         }
         var a = "../dist/assets/campfire/fire.babylon";
         a.replace(/\.\.\/dist/, ".");
@@ -517,6 +522,7 @@
         $inscriptionQueue = [];
     }
 
+    // HACKHACK
     $: {
         if ($summonResolution == "release") {
             setState(State.Releasing);
@@ -525,6 +531,14 @@
             setState(State.Retaining);
         }
         $summonResolution = "";
+    }
+
+    // HACKHACK
+    $: {
+        if ($woodPileReturnSignal) {
+            setState(State.Returning);
+            $woodPileReturnSignal = false;
+        }
     }
 
 </script>

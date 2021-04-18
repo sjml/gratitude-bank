@@ -1,13 +1,21 @@
 <script lang="ts" context="module">
     export const maxInputLength = 55;
+
+    import InteractionPrompt from "./InteractionPrompt.svelte";
 </script>
 
 <script lang="ts">
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
 
-    import { inscriptionRect, inscriptionQueue, summonRect, currentGratitude, summonResolution } from "./stores";
-    import { storeGratitude, releaseGratitude } from "./gratitude";
+    import { State } from "./types";
+    import {
+        currentState,
+        woodPileRect,
+        inscriptionRect, inscriptionQueue,
+        summonRect, currentGratitude, summonResolution, gratitudeCount, woodPileReturnSignal
+    } from "./stores";
+    import { storeGratitude, releaseGratitude, getGratitudeCount } from "./gratitude";
     import About from "./About.svelte";
 
     let aboutShown = false;
@@ -55,6 +63,10 @@
         inputValue = "";
     }
 
+    function ret() {
+        $woodPileReturnSignal = true;
+    }
+
     function release() {
         releaseGratitude($currentGratitude.text);
         $summonResolution = "release";
@@ -93,7 +105,24 @@
         <About on:closed={() => aboutShown = false} />
     {/if}
 
-    {#if $inscriptionRect != null}
+    {#if $woodPileRect !== null && $woodPileRect.width > 0}
+        <div class="logInteract"
+            style={`top: ${$woodPileRect.top}px; left: ${$woodPileRect.left}px; width: ${$woodPileRect.width}px; height: ${$woodPileRect.height}px;`}
+        >
+            {#if $currentState == State.Ready && aboutLinkVisible && !aboutShown && $gratitudeCount == 0}
+                <div class="ipWrapper"
+                    in:fade|local={{duration: 2000}}
+                    out:fade|local={{duration: 1000}}
+                >
+                    <InteractionPrompt />
+                </div>
+            {:else if $currentState == State.Scribing}
+                <button on:click={ret}>Return</button>
+            {/if}
+        </div>
+    {/if}
+
+    {#if $currentState == State.Scribing && $inscriptionRect !== null }
         <form on:submit|preventDefault={inscribe}>
             <div class="inscription"
                 style={`top: ${$inscriptionRect.top}px; left: ${$inscriptionRect.left}px; width: ${$inscriptionRect.width}px; height: ${$inscriptionRect.height}px;`}
@@ -107,7 +136,7 @@
                 <input class="submit" type="submit" value="Inscribe" disabled={inputValue.length == 0}>
             </div>
         </form>
-    {:else if $summonRect != null}
+    {:else if $currentState == State.Remembering && $summonRect !== null }
         <div class="remembering"
             style={`top: ${$summonRect.top}px; left: ${$summonRect.left}px; width: ${$summonRect.width}px; height: ${$summonRect.height}px;`}
             transition:fade|local
@@ -139,7 +168,6 @@
     }
 
     .header {
-        /* position: absolute; */
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
@@ -172,7 +200,7 @@
         transition-timing-function: ease-in-out, ease-in-out, linear;
     }
     .title.intro {
-        font-size: 80px;
+        font-size: 100px;
         transform:
             translateX(calc(50vw - 50%))
             translateY(calc(50vh - 50%));
@@ -235,7 +263,10 @@
         outline: none;
     }
 
-    .inscription input.submit, .remembering button {
+    .inscription input.submit,
+    .remembering button,
+    .logInteract button
+    {
         /* padding: 5px 20px; */
         color: white;
         background-color: rgba(0, 17, 68, 0.8);
@@ -243,6 +274,7 @@
         font-family: inherit;
         border: 2px solid black;
         -webkit-appearance: none;
+        pointer-events: all;
 
         opacity: 1;
         transition-property: opacity;
@@ -266,5 +298,25 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .remembering button {
+        margin: 30px;
+    }
+
+    .logInteract {
+        position: absolute;
+        pointer-events: none;
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
+
+    @media only screen and (max-width: 414px) {
+        .logInteract button {
+            position: relative;
+            left: 25px;
+        }
     }
 </style>

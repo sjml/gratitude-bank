@@ -130,22 +130,6 @@
         flex-direction: column;
     }
 
-    .nav {
-        width: 100%;
-
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .close {
-        cursor: pointer;
-    }
-
-    .close svg {
-        height: 40px;
-        width: 40px;
-    }
-
     .aboutContent {
         overflow-y: scroll;
 

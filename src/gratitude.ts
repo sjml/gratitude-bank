@@ -1,4 +1,5 @@
 import { pd } from "./util";
+import { gratitudeCount } from "./stores";
 
 export type Gratitude = {
     text: string,
@@ -30,6 +31,7 @@ export function storeGratitude(text: string) {
 
         localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
     }
+    gratitudeCount.set(getGratitudeCount());
 }
 
 export function recallGratitude() : Gratitude {
@@ -82,6 +84,8 @@ export function releaseGratitude(text: string) {
     gratitude = gratitude.filter((g) => g.text != text);
 
     localStorage.setItem("gratitude_storage_v1", JSON.stringify(gratitude));
+
+    gratitudeCount.set(getGratitudeCount());
 }
 
 export function getGratitudeCount() {
