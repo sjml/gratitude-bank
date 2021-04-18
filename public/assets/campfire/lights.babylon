@@ -6,9 +6,23 @@
             "type": 3,
             "position": [0.0, 0.0, 0.0],
             "direction": [0, 1, 0],
-            "diffuse": [1, 1, 1],
-            "specular": [1, 1, 1],
+            "diffuse": [0.5, 0.5, 0.5],
+            "specular": [0.5, 0.5, 0.5],
             "groundColor": [0, 0, 0]
+        },
+        {
+            "name": "FireLight",
+            "id": "FireLight",
+            "type": 0,
+            "position": [0, 0.3, 0],
+            "shadowAngle": 1.5707963267948966,
+            "diffuse": [1, 0.5, 0],
+            "specular": [1, 0.5, 1],
+            "falloffType": 0,
+            "intensity": 10,
+            "intensityMode": 0,
+            "radius": 0.00001,
+            "shadowEnabled": true
         }
     ]
 }

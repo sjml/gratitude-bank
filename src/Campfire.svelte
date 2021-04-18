@@ -28,6 +28,9 @@
     let summonTexture: BABYLON.DynamicTexture = null
     const summonTextureDimensions = {width: 2048, height: 2048};
 
+    let startTimeStampMS: number = 0;
+    let fireLight: BABYLON.PointLight = null;
+
     const woodPile = [
         "AnimLog",
         "AnimLogProxy",
@@ -223,6 +226,7 @@
 
     async function init() {
         engine = new BABYLON.Engine(renderCanvas, true);
+        startTimeStampMS = new Date().getTime();
 
         const pixelRatio = window.devicePixelRatio;
         engine.setHardwareScalingLevel(1.0 / pixelRatio);
@@ -232,6 +236,8 @@
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
         await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
 
+
+        // setup inscription surface
         animLog = scene.getMeshByName(woodPile[0]) as BABYLON.Mesh;
 
         const inscSurf = scene.getMeshByName("InscriptionSurface");
@@ -241,6 +247,45 @@
         inscriptionTexture = new BABYLON.DynamicTexture("Inscription", inscriptionTextureDimensions, scene, true);
         inscMat.albedoTexture = inscriptionTexture;
 
+
+        // setup summoning render surface
+        summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
+
+        const summonMat = new BABYLON.StandardMaterial("SummonMaterial", scene);
+        summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
+        summonMat.emissiveTexture = summonTexture;
+        summonMat.disableLighting = true;
+        summonDisplay.material = summonMat;
+
+
+        // setup fire light animation
+        fireLight = scene.getLightByName("FireLight") as BABYLON.PointLight;
+        scene.registerBeforeRender(() => {
+            const elapsed = (new Date().getTime() - startTimeStampMS) / 1000;
+            const rate = 1;
+            const x = rate * elapsed;
+
+            // kinda ad-hoc fire movement/flickering made by screwing around in Desmos
+            //  until it looked ok. works fine; could be better.
+
+            fireLight.intensity =
+                (3 * Math.sin(x) + 9) +
+                (Math.sin(10 * x)) +
+                (Math.cos(5 * x)) +
+            0;
+
+            fireLight.position.x =
+                (
+                    Math.sin(x * 3) +
+                    Math.cos(x * 1.2)
+                )
+             * .05;
+             fireLight.position.z =
+                Math.cos(x) * 0.04;
+        });
+
+
+        // setup campfire click target
         // doesn't seem to be a way to export StandardMaterials out of Blender, so some switcheroo here
         const cfEmpty = scene.getMeshByName("CampfireBB");
         const secretCube = BABYLON.BoxBuilder.CreateBox("CampfireClickTarget", {}, scene);
@@ -251,13 +296,7 @@
         invisibleMaterial.alpha = 0.0;
         secretCube.material = invisibleMaterial;
 
-        summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
 
-        const summonMat = new BABYLON.StandardMaterial("SummonMaterial", scene);
-        summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
-        summonMat.emissiveTexture = summonTexture;
-        summonMat.disableLighting = true;
-        summonDisplay.material = summonMat;
 
         setState(State.Ready);
 
