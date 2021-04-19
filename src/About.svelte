@@ -68,7 +68,7 @@
 
         <p>
             Later, you can tap on the fire when you need to be reminded of gratitude.
-            It will bring back one of the things you’ve stored away, to remind you of
+            It will bring back one of the things you’ve stored away, and you can recall
             something good from your life. Once you’ve seen it, you can choose to retain
             it (if you’d like to see it again) or release it (if you feel it has served
             its purpose).

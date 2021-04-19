@@ -33,7 +33,7 @@
             height: 0;
             opacity: 0;
         }
-        5% {
+        50% {
             top: 36px;
             left: 36px;
             width: 0;
