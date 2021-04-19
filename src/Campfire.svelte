@@ -441,7 +441,7 @@
             );
         }
 
-        inscriptionTexture.update();
+        inscriptionTexture.update(true, true);
     }
 
     function setSummonDisplay(inputString: string) {
@@ -509,7 +509,7 @@
 
         }
 
-        summonTexture.update();
+        summonTexture.update(true, true);
     }
 
     $: if ($inscriptionQueue.length > 0) {
