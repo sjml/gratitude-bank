@@ -14,3 +14,4 @@ const inputString = fs.readFileSync(buildFile).toString();
 const outputString = inputString.replace("#GRATITUDE_VERSION_STRING#", versionString);
 
 fs.writeFileSync(buildFile, outputString);
+fs.writeFileSync("./dist/VERSION", versionString);

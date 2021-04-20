@@ -106,6 +106,13 @@
     function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false): AnimData {
         pd("trying to animate", animName, "on", mesh.name, mesh);
         let animRange = mesh.getAnimationRange(animName).clone();
+
+        // I cannot for the life of me determine why thie is necessary.
+        //   The Blender to Babylon exporter is very mysterious, especially when it comes
+        //   to animations. Without this off-by-one correction there's jumps as it underruns
+        //   the correct animation, so what is the returned range supposed to indicate?
+        animRange.from += 1;
+
         if (reverse) {
             [animRange.from, animRange.to] = [animRange.to, animRange.from];
         }
@@ -154,7 +161,7 @@
             animRes.animHandle.goToFrame(animRes.animRange.from);
 
             // make sure summon is set below ground
-            animRes = runAnim(summonDisplay, "Summon");
+            animRes = runAnim(summonDisplay, "SummonBaked");
             animRes.animHandle.stop();
             animRes.animHandle.goToFrame(animRes.animRange.from);
 
@@ -209,7 +216,7 @@
 
             setSummonDisplay($currentGratitude.text);
 
-            summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Remembering));
+            summonAnimData = runAnim(summonDisplay, "SummonBaked", () => setState(State.Remembering));
         }
 
         else if ($currentState == State.Remembering) {
@@ -218,11 +225,12 @@
         }
 
         else if ($currentState == State.Retaining) {
-            summonAnimData = runAnim(summonDisplay, "Summon", () => setState(State.Ready), true);
+            summonAnimData = runAnim(summonDisplay, "SummonBaked", () => setState(State.Ready), true);
         }
 
         else if ($currentState == State.Releasing) {
-            setState(State.Ready);
+            await new Promise((res) => setTimeout(res, 900));
+            summonAnimData = runAnim(summonDisplay, "ReleaseBaked", () => setState(State.Ready));
         }
     }
 
@@ -298,10 +306,15 @@
                 const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
                 summonMat.setFloat("comp", comp);
             }
-            else if ($currentState == State.Retaining && summonAnimData != null) {
+            else if (($currentState == State.Retaining) && summonAnimData != null) {
                 const currFrame = summonAnimData.animHandle.masterFrame;
                 const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
                 summonMat.setFloat("comp", 1.0 - comp);
+            }
+            else if ($currentState == State.Releasing && summonAnimData != null) {
+                const currFrame = summonAnimData.animHandle.masterFrame;
+                const comp = (currFrame - summonAnimData.animRange.from) / (summonAnimData.animRange.to - summonAnimData.animRange.from);
+                summonMat.setFloat("comp", 1.0 - (comp*1.7));
             }
         });
         summonTexture = new BABYLON.DynamicTexture("Summon", summonTextureDimensions, scene, true);
