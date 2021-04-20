@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd "$(dirname "$0")"
-cd ../public/assets/campfire
+cd ../public/assets
 
 rm *.log
 

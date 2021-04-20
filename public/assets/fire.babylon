@@ -14,7 +14,7 @@
         "minEmitBox": [-0.17, -0.17, -0.17],
         "maxEmitBox": [0.17, 0.17, 0.17]
       },
-      "textureName": "./assets/campfire/circle.png",
+      "textureName": "./assets/circle.png",
       "invertY": true,
       "isLocal": false,
       "animations": [],
@@ -84,7 +84,7 @@
         "minEmitBox": [-0.1, -0.1, -0.1],
         "maxEmitBox": [0.1, 0.1, 0.1]
       },
-      "textureName": "./assets/campfire/circle.png",
+      "textureName": "./assets/circle.png",
       "invertY": true,
       "isLocal": false,
       "animations": [],

@@ -16,6 +16,7 @@
     //   Means the final build takes a smidge longer, but it's only
     //   for deployment, so I'll take easier development.
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
+import { text } from "svelte/internal";
 
     type AnimData = {
         animHandle: BABYLON.Animatable,
@@ -246,9 +247,9 @@
         engine.setHardwareScalingLevel(1.0 / pixelRatio);
 
         engine.loadingScreen = new CustomLoadingScreen();
-        scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire/campfire_set.babylon", engine);
-        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/lights.babylon", scene);
-        await BABYLON.SceneLoader.AppendAsync("", "./assets/campfire/fire.babylon", scene);
+        scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire_set.babylon", engine);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/lights.babylon", scene);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/fire.babylon", scene);
 
         startTimeStampMS = new Date().getTime();
         scene.registerBeforeRender(() => {
@@ -281,7 +282,7 @@
         summonDisplay = scene.getMeshByName("SummoningDisplay") as BABYLON.Mesh;
 
         const summonMat = new BABYLON.ShaderMaterial("SummonMaterial", scene,
-            "./assets/campfire/shaders/summon",
+            "./assets/shaders/summon",
             {
                 attributes: ["position", "uv"],
                 uniforms: ["worldViewProjection", "elapsedTime", "comp"],
@@ -369,7 +370,7 @@
             engine.resize();
             updateMeshRects();
         }
-        var a = "../dist/assets/campfire/fire.babylon";
+        var a = "../dist/assets/fire.babylon";
         a.replace(/\.\.\/dist/, ".");
     }
 
@@ -413,18 +414,49 @@
             return {fontSize: baseFontSize, snippets: [inputString]};
         }
 
-        // find the space closest to the center of the line
         let matches = inputString.matchAll(/\s/g);
         let breaks: {[key: string]: number} = {};
         for (const match of matches) {
             breaks[String(match.index)] = Math.abs((inputString.length / 2) - match.index);
         }
+
+        let line1: string = "";
+        let line2: string = "";
+        let line3: string = "";
+        if (Object.keys(breaks).length == 0) {
+            // no spaces; try a little squeeze first
+            if (textWidth - (widthGrace*2) <= maxWidth) {
+                return {fontSize: baseFontSize, snippets: [inputString]};
+            }
+            // ok let's just just try splitting it in two
+            const middle = Math.floor(inputString.length / 2);
+            line1 = inputString.substring(0, middle).trim();
+            line2 = inputString.substring(middle+1).trim();
+
+            ctx.font = formatString.replace("#FONTSIZE#", (baseFontSize / 2).toFixed(0));
+            const w1 = ctx.measureText(line1).width;
+            const w2 = ctx.measureText(line2).width;
+            if (  (maxBreaks == 2) || ( (w1 - widthGrace <= maxWidth) && (w2 - widthGrace <= maxWidth) )  ) {
+                // either it works ok OR we're only allowed to break in two
+                return {fontSize: baseFontSize / 2, snippets: [line1 + "-", line2]};
+            }
+
+            // try for thirds and hope for the best
+            const third = Math.floor(inputString.length / 3);
+            line1 = inputString.substring(0, third).trim();
+            line2 = inputString.substring(third+1, third*2);
+            line3 = inputString.substring((third*2)+1);
+            return {fontSize: baseFontSize / 3, snippets: [line1 + "-", line2 + "-", line3]};
+        }
+
+        // find the space closest to the center of the line
         const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
         let breakIdx = parseInt(breakStr);
 
         // split it at that point
-        let line1 = inputString.substring(0, breakIdx).trim();
-        let line2 = inputString.substring(breakIdx+1).trim();
+        line1 = inputString.substring(0, breakIdx).trim();
+        line2 = inputString.substring(breakIdx+1).trim();
+
         if (maxBreaks == 2) {
             return {fontSize: baseFontSize / 2, snippets: [line1, line2]};
         }
@@ -437,23 +469,23 @@
             return {fontSize: baseFontSize / 2, snippets: [line1, line2]};
         }
 
-        // we tried 2 lines, but they're still too wide; we're allowed 3 so let's try
+        // we tried 2 lines, but they're still too wide; we're allowed 3 so let's do it
+        matches = inputString.matchAll(/\s/g);
+        const thirdBreaks: {[key: string]: number} = {};
+        const twoThirdBreaks: {[key: string]: number} = {};
         for (const match of matches) {
-            breaks[String(match.index)] = Math.abs((inputString.length / 3) - match.index);
+            thirdBreaks[String(match.index)] = Math.abs((inputString.length / 3) - match.index);
+            twoThirdBreaks[String(match.index)] = Math.abs((inputString.length / 3 * 2) - match.index);
         }
         // closest break to 1/3
-        const earlyBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-        const earlyBreakDist = breaks[earlyBreakStr];
+        const earlyBreakStr = Object.keys(thirdBreaks).reduce((a, b) => thirdBreaks[a] < thirdBreaks[b] ? a : b);
+        const earlyBreakDist = thirdBreaks[earlyBreakStr];
 
-        for (const match of matches) {
-            breaks[String(match.index)] = Math.abs((inputString.length / 3 * 2) - match.index);
-        }
         // closest break to 2/3
-        const lateBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-        const lateBreakDist = breaks[lateBreakStr];
+        const lateBreakStr = Object.keys(twoThirdBreaks).reduce((a, b) => twoThirdBreaks[a] < twoThirdBreaks[b] ? a : b);
+        const lateBreakDist = twoThirdBreaks[lateBreakStr];
 
-        let line3: string = "";
-        if (earlyBreakDist < lateBreakDist) {
+        if (earlyBreakDist <= lateBreakDist) {
             // break at the first third
             breakIdx = parseInt(earlyBreakStr);
             line1 = inputString.substring(0, breakIdx).trim();
@@ -465,17 +497,23 @@
             for (const match of matches) {
                 breaks[String(match.index)] = Math.abs((line2.length / 2) - match.index);
             }
-            let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-            let remBreakIdx = parseInt(remBreakStr);
-            let line3 = line2.substring(remBreakIdx+1).trim();
-            line2 = line2.substring(0, remBreakIdx).trim();
+            if (Object.keys(breaks).length == 0) {
+                line3 = line2.substring((line2.length / 2)+1).trim();
+                line2 = line2.substring(0, line2.length / 2).trim() + "-";
+            }
+            else {
+                let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+                let remBreakIdx = parseInt(remBreakStr);
+                line3 = line2.substring(remBreakIdx+1).trim();
+                line2 = line2.substring(0, remBreakIdx).trim();
+            }
         }
         else {
-            line3 = line2;
             // break at the last third
             breakIdx = parseInt(lateBreakStr);
             line1 = inputString.substring(0, breakIdx).trim();
             line2 = inputString.substring(breakIdx+1).trim();
+            line3 = line2;
 
             // break remainder in half
             matches = line1.matchAll(/\s/g);
@@ -483,11 +521,18 @@
             for (const match of matches) {
                 breaks[String(match.index)] = Math.abs((line1.length / 2) - match.index);
             }
-            let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-            let remBreakIdx = parseInt(remBreakStr);
-            line2 = line1.substring(remBreakIdx+1).trim();
-            line1 = line1.substring(0, remBreakIdx).trim();
+            if (Object.keys(breaks).length == 0) {
+                line2 = line1.substring((line1.length / 2)+1).trim();
+                line1 = line1.substring(0, line1.length / 2).trim();
+            }
+            else {
+                let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+                let remBreakIdx = parseInt(remBreakStr);
+                line2 = line1.substring(remBreakIdx+1).trim();
+                line1 = line1.substring(0, remBreakIdx).trim();
+            }
         }
+
         return {fontSize: baseFontSize / 3, snippets: [line1, line2, line3]};
     }
 

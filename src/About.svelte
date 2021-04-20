@@ -17,8 +17,8 @@
         </p>
         <p>
             Let me know what you think of it, especially if you like it or end up using it! The
-            easiest way to reach out is my public-facing Twitter profile, <a href="https://twitter.com/OptimistPanda"
-            target="_blank">@OptimistPanda</a>.
+            easiest way to reach out is my public-facing Twitter profile,
+            <a href="https://twitter.com/OptimistPanda" target="_blank">@OptimistPanda</a>.
         </p>
 
         <h2 id="why-gratitude">Why Gratitude?</h2>
