@@ -381,133 +381,208 @@
         teardown();
     });
 
-    // these two functions (putting text into a dynamic texture)
-    //   could probably be abstracted a bit, but this is the extent
-    //   of the functionality and life is short.
+    // too many parameters here, but meh
+    function breakTextForCanvas(inputString: string,
+                       baseFontSize: number, // a more clever algorithm would be able to calculate this itself
+                       formatString: string, // has to be specially formatted
+                       ctx: CanvasRenderingContext2D,
+                       maxBreaks: number,
+                       maxWidthMultiplier: number
+                    ) {
+        // for more arbitrary text inputs it would be better to just measure each
+        //   word and accumulate lines up to the max width, but we don't want to leave
+        //   any orphans know the general size of the input range so this kind of backflip
+        //   is a little bit better visually.
+        // there is probably some clever algorithm out there that would do this better, though.
+
+
+        if (maxBreaks !== 2 && maxBreaks !== 3) {
+            // limited input and arbitrary text wrapping is a hard problem
+            console.error("Only handling maxBreaks of 2 and 3");
+            return null;
+        }
+
+        const widthGrace = ctx.canvas.width * 0.1; // canvas will do some squishing automatically,
+                                                   // and it can look pretty ok
+        const maxWidth = ctx.canvas.width * maxWidthMultiplier;
+
+        inputString = inputString.trim();
+        ctx.font = formatString.replace("#FONTSIZE#", baseFontSize.toFixed(0));
+        const textWidth = ctx.measureText(inputString).width;
+        if (textWidth - widthGrace <= maxWidth) {
+            return {fontSize: baseFontSize, snippets: [inputString]};
+        }
+
+        // find the space closest to the center of the line
+        let matches = inputString.matchAll(/\s/g);
+        let breaks: {[key: string]: number} = {};
+        for (const match of matches) {
+            breaks[String(match.index)] = Math.abs((inputString.length / 2) - match.index);
+        }
+        const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+        let breakIdx = parseInt(breakStr);
+
+        // split it at that point
+        let line1 = inputString.substring(0, breakIdx).trim();
+        let line2 = inputString.substring(breakIdx+1).trim();
+        if (maxBreaks == 2) {
+            return {fontSize: baseFontSize / 2, snippets: [line1, line2]};
+        }
+
+        // was the break sufficient?
+        ctx.font = formatString.replace("#FONTSIZE#", (baseFontSize / 2).toFixed(0));
+        const w1 = ctx.measureText(line1).width;
+        const w2 = ctx.measureText(line2).width;
+        if ((w1 - widthGrace <= maxWidth) && (w2 - widthGrace <= maxWidth)) {
+            return {fontSize: baseFontSize / 2, snippets: [line1, line2]};
+        }
+
+        // we tried 2 lines, but they're still too wide; we're allowed 3 so let's try
+        for (const match of matches) {
+            breaks[String(match.index)] = Math.abs((inputString.length / 3) - match.index);
+        }
+        // closest break to 1/3
+        const earlyBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+        const earlyBreakDist = breaks[earlyBreakStr];
+
+        for (const match of matches) {
+            breaks[String(match.index)] = Math.abs((inputString.length / 3 * 2) - match.index);
+        }
+        // closest break to 2/3
+        const lateBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+        const lateBreakDist = breaks[lateBreakStr];
+
+        let line3: string = "";
+        if (earlyBreakDist < lateBreakDist) {
+            // break at the first third
+            breakIdx = parseInt(earlyBreakStr);
+            line1 = inputString.substring(0, breakIdx).trim();
+            line2 = inputString.substring(breakIdx+1).trim();
+
+            // break remainder in half
+            matches = line2.matchAll(/\s/g);
+            breaks = {};
+            for (const match of matches) {
+                breaks[String(match.index)] = Math.abs((line2.length / 2) - match.index);
+            }
+            let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+            let remBreakIdx = parseInt(remBreakStr);
+            let line3 = line2.substring(remBreakIdx+1).trim();
+            line2 = line2.substring(0, remBreakIdx).trim();
+        }
+        else {
+            line3 = line2;
+            // break at the last third
+            breakIdx = parseInt(lateBreakStr);
+            line1 = inputString.substring(0, breakIdx).trim();
+            line2 = inputString.substring(breakIdx+1).trim();
+
+            // break remainder in half
+            matches = line1.matchAll(/\s/g);
+            breaks = {};
+            for (const match of matches) {
+                breaks[String(match.index)] = Math.abs((line1.length / 2) - match.index);
+            }
+            let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
+            let remBreakIdx = parseInt(remBreakStr);
+            line2 = line1.substring(remBreakIdx+1).trim();
+            line1 = line1.substring(0, remBreakIdx).trim();
+        }
+        return {fontSize: baseFontSize / 3, snippets: [line1, line2, line3]};
+    }
+
+    function stuffText(snippets: string[],
+                    maxWidthMultiplier: number,
+                    originOffset: number[],
+                    ctx: CanvasRenderingContext2D
+            ){
+        const origin = {
+            x: (ctx.canvas.width  / 2) + originOffset[0],
+            y: (ctx.canvas.height / 2) + originOffset[1],
+        }
+        const maxWidth = ctx.canvas.width * maxWidthMultiplier;
+        const metrics = ctx.measureText(snippets[0]);
+        const lineHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+        const spacerSize = 0.7; // magic number
+
+        if (snippets.length == 1) {
+            ctx.fillText(snippets[0], origin.x, origin.y, maxWidth);
+        }
+        else if (snippets.length == 2) {
+            ctx.fillText(snippets[0],
+                origin.x,
+                origin.y - (lineHeight * spacerSize),
+                maxWidth
+            );
+            ctx.fillText(snippets[1],
+                origin.x,
+                origin.y + (lineHeight * spacerSize),
+                maxWidth
+            );
+        }
+        else if (snippets.length == 3) {
+            ctx.fillText(snippets[0],
+                origin.x,
+                origin.y - (lineHeight * spacerSize * 1.5),
+                maxWidth
+            );
+            ctx.fillText(snippets[1], origin.x, origin.y, maxWidth);
+            ctx.fillText(snippets[2],
+                origin.x,
+                origin.y + (lineHeight * spacerSize * 1.5),
+                maxWidth
+            );
+        }
+        else {
+            console.error("Should only be max of 3 snippets.");
+        }
+    }
 
     function setInscription(inputString: string) {
+        const format = "#FONTSIZE#px 'National Park', sans-serif";
         const ctx = inscriptionTexture.getContext();
         ctx.fillStyle = inscriptionBaseColor.toHexString();
         ctx.fillRect(0, 0, inscriptionTextureDimensions.width, inscriptionTextureDimensions.height);
 
-        const maxWidth = inscriptionTextureDimensions.width * 0.8;
-        const widthGrace = 200; // canvas will do some squishing automatically,
-                                // and it can look pretty ok
-        const baseFontSize = 250;
+        const lineBreakRes = breakTextForCanvas(
+            inputString,
+            250,
+            format,
+            ctx,
+            3,
+            0.9
+        );
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
-        ctx.font = `${baseFontSize}px 'National Park', sans-serif`;
+        ctx.font = format.replace("#FONTSIZE#", lineBreakRes.fontSize.toFixed(0));
 
-        inputString = inputString.trim();
-        const textWidth = ctx.measureText(inputString).width;
-        if (textWidth - widthGrace <= maxWidth) {
-            ctx.fillText(inputString,
-                inscriptionTextureDimensions.width / 2,
-                inscriptionTextureDimensions.height / 2 + 15,
-                maxWidth
-            );
-        }
-        else {
-            // thankfully the input is limited so only have to handle a single linebreak
+        stuffText(lineBreakRes.snippets, 0.8, [0,15], ctx);
 
-            // find the space closest to the center of the line
-            const matches = inputString.matchAll(/\s/g);
-            const breaks: {[key: string]: number} = {};
-            for (const match of matches) {
-                breaks[String(match.index)] = Math.abs((inputString.length / 2) - match.index);
-            }
-            const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-            const breakIdx = parseInt(breakStr);
-
-            const line1 = inputString.substring(0, breakIdx).trim();
-            const line2 = inputString.substring(breakIdx+1).trim();
-
-            ctx.font = `${baseFontSize / 2}px 'National Park', sans-serif`;
-
-            const metrics = ctx.measureText(line1);
-            const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-
-            ctx.fillText(line1,
-                inscriptionTextureDimensions.width / 2,
-                (inscriptionTextureDimensions.height / 2 + 15) - (height * 0.7),
-                maxWidth
-            );
-            ctx.fillText(line2,
-                inscriptionTextureDimensions.width / 2,
-                (inscriptionTextureDimensions.height / 2 + 15) + (height * 0.7),
-                maxWidth
-            );
-        }
-
-        inscriptionTexture.update(true, true);
+        inscriptionTexture.update();
     }
 
     function setSummonDisplay(inputString: string) {
+        const format = "bold #FONTSIZE#px 'Amatic_SC', sans-serif";
         const ctx = summonTexture.getContext();
         ctx.clearRect(0, 0, summonTextureDimensions.width, summonTextureDimensions.height);
 
-        const maxWidth = summonTextureDimensions.width * 0.9;
-        const widthGrace = 100; // canvas will do some squishing automatically,
-                                // and it can look pretty ok
-        const baseFontSize = 500;
+        const lineBreakRes = breakTextForCanvas(
+            inputString,
+            800,
+            format,
+            ctx,
+            3,
+            0.9
+        );
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `bold ${baseFontSize}px 'Amatic_SC', sans-serif`;
+        ctx.fillStyle = "white";
+        ctx.font = format.replace("#FONTSIZE#", lineBreakRes.fontSize.toFixed(0));
 
-        inputString = inputString.trim();
-        const textWidth = ctx.measureText(inputString).width;
-        if (textWidth - widthGrace <= maxWidth) {
-            ctx.fillText(inputString,
-                summonTextureDimensions.width / 2,
-                summonTextureDimensions.height / 2,
-                maxWidth
-            );
-        }
-        else {
-            // thankfully the input is limited so only have to handle a single linebreak
-
-            // find the space closest to the center of the line
-            const matches = inputString.matchAll(/\s/g);
-            const breaks: {[key: string]: number} = {};
-            for (const match of matches) {
-                breaks[match.index] = Math.abs((inputString.length / 2) - match.index);
-            }
-            if (Object.keys(breaks).length == 0) {
-                ctx.fillText(inputString,
-                    summonTextureDimensions.width / 2,
-                    summonTextureDimensions.height / 2,
-                    maxWidth
-                );
-            }
-            else {
-                const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
-                const breakIdx = parseInt(breakStr);
-
-                const line1 = inputString.substring(0, breakIdx).trim();
-                const line2 = inputString.substring(breakIdx+1).trim();
-
-                ctx.font = `bold ${baseFontSize / 2}px 'Amatic_SC', sans-serif`;
-
-                const metrics = ctx.measureText(line1);
-                const height = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-
-                ctx.fillText(line1,
-                    summonTextureDimensions.width / 2,
-                    (summonTextureDimensions.height / 2) - (height * 0.7),
-                    maxWidth
-                );
-                ctx.fillText(line2,
-                    summonTextureDimensions.width / 2,
-                    (summonTextureDimensions.height / 2) + (height * 0.7),
-                    summonTextureDimensions.width
-                );
-            }
-
-        }
+        stuffText(lineBreakRes.snippets, 0.9, [0,0], ctx);
 
         summonTexture.update(true, true);
     }
