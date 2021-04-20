@@ -16,7 +16,6 @@
     //   Means the final build takes a smidge longer, but it's only
     //   for deployment, so I'll take easier development.
     import * as BABYLON from "@babylonjs/core/Legacy/legacy";
-import { text } from "svelte/internal";
 
     type AnimData = {
         animHandle: BABYLON.Animatable,
@@ -105,7 +104,7 @@ import { text } from "svelte/internal";
     }
 
     function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false): AnimData {
-        pd("trying to animate", animName, "on", mesh.name);
+        pd("trying to animate", animName, "on", mesh.name, mesh);
         let animRange = mesh.getAnimationRange(animName).clone();
         if (reverse) {
             [animRange.from, animRange.to] = [animRange.to, animRange.from];
@@ -250,6 +249,8 @@ import { text } from "svelte/internal";
         scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire_set.babylon", engine);
         await BABYLON.SceneLoader.AppendAsync("", "./assets/lights.babylon", scene);
         await BABYLON.SceneLoader.AppendAsync("", "./assets/fire.babylon", scene);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/summon.babylon", scene);
+        await BABYLON.SceneLoader.AppendAsync("", "./assets/anim_log.babylon", scene);
 
         startTimeStampMS = new Date().getTime();
         scene.registerBeforeRender(() => {

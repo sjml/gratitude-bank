@@ -1,0 +1,28 @@
+{"producer":{"name":"Blender","version":"2.92.0","exporter_version":"2.91-alpha","file":"summon.babylon"},
+"autoClear":true,"clearColor":[0.0509,0.0509,0.0509],"gravity":[0,-9.81,0],
+"materials":[{"name":"InscriptionMaterial","id":"InscriptionMaterial","customType":"BABYLON.PBRMaterial","backFaceCulling":true,"checkReadyOnlyOnce":false,"maxSimultaneousLights":4,"environmentIntensity":1,"albedo":[0.8344,0.6028,0.194],"reflectivity":[0,0,0],"roughness":1,"alpha":1,"transparencyMode":0,"alphaCutOff":0.4,"metallic":0}],
+"multiMaterials":[],
+"skeletons":[],
+"meshes":[{"name":"SummoningDisplay","id":"SummoningDisplay","materialId":"InscriptionMaterial","billboardMode":0,"position":[-0.5163,-0.1429,-0.2651],"rotation":[0,-0.4197,-1.6279],"scaling":[0.1362,0.3911,0.1362],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,"positions":[1,0,-1,-1,0,1,-1,0,-1,1,0,1]
+,"normals":[0,1,0,0,1,0,0,1,0,0,1,0]
+,"uvs":[0,0,1,1,0,1,1,0]
+,"indices":[0,1,2,0,3,1]
+,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":4,"indexStart":0,"indexCount":6}]
+,"animations":[{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":1,"values":[0,-0.4197,-1.6279]},
+{"frame":66,"values":[0,-0.4197,-1.6279]},
+{"frame":151,"values":[0,-0.4197,-1.6279]}],"loopBehavior":1,"name":"rotation animation","property":"rotation"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":1,"values":[-0.5163,-0.1429,-0.2651]},
+{"frame":66,"values":[-0.2779,0.6843,-0.1587]},
+{"frame":151,"values":[1.2528,1.044,0.5243]}],"loopBehavior":1,"name":"position animation","property":"position"},{"dataType":1,"framePerSecond":60,"keys":[
+{"frame":1,"values":[0.1362,0.3911,0.1362]},
+{"frame":66,"values":[0.2212,0.635,0.2212]},
+{"frame":151,"values":[0.3484,1,0.3484]}],"loopBehavior":1,"name":"scaling animation","property":"scaling"}],"ranges":[{"name":"Summon","from":0,"to":151}]
+,"instances":[]}
+],
+"morphTargetManagers":[],
+"cameras":[{"name":"Camera","id":"Camera","position":[3.3178,1.0727,1.4082],"rotation":[0.1639,-1.9738,0],"fov":0.6911,"minZ":0.1,"maxZ":100,"speed":1,"inertia":0.9,"checkCollisions":true,"applyGravity":false,"ellipsoid":[0.2,0.9,0.2],"cameraRigMode":0,"interaxial_distance":0.0637,"type":"UniversalCamera"}],"activeCameraID":"Camera",
+"lights":[],
+"shadowGenerators":[]
+}

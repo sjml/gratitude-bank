@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 cd ../public/assets
 
-rm *.log
+rm -f *.log
 
 for bab in **/*.babylon; do
   prettier --write --parser json $bab

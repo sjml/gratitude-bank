@@ -1,13 +1,30 @@
 <script>
     import { fade } from "svelte/transition";
+
+    const versionString: string = "#GRATITUDE_VERSION_STRING#";
+
+    function getVersion() {
+        // to make find/replace easier in the build process :D
+        if (versionString.startsWith("#GRATITUDE_VERSION_STRING")) {
+            return "(dev)";
+        }
+        else {
+            return `version: ${versionString}`;
+        }
+    }
 </script>
 
 <div class="about"
     transition:fade|local
 >
     <div class="aboutContent">
-        <h1>Gratitude Bank</h1>
-        <p class="attribution">by <a href="https://shaneliesegang.com" target="_blank">Shane Liesegang, SJ</a></p>
+        <div class="meta">
+            <div class="metaTop">
+                <h1>Gratitude Bank</h1>
+                <div>{getVersion()}</div>
+            </div>
+            <p class="attribution">by <a href="https://shaneliesegang.com" target="_blank">Shane Liesegang, SJ</a></p>
+        </div>
 
         <p>
             This is a tool meant to help you cultivate a sense of gratitude, and to remind
@@ -139,14 +156,24 @@
     h1 {
         margin: 0;
         font-family: 'Amatic_SC';
+        font-size: 60px;
     }
 
     h2 {
         margin: 40px 0 10px 0;
     }
 
-    p.attribution {
-        margin-top: 0;
+    div.meta {
+        margin-bottom: 40px;
+    }
+
+    div.meta p {
+        margin: 0;
+    }
+
+    div.metaTop {
+        display: flex;
+        justify-content: space-between;
     }
 
     a, a:visited {

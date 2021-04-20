@@ -22,4 +22,8 @@ for bab in $ROOT_DIR/dist/**/*.babylon; do
   echo $inp | jq -c . > $bab
 done
 
+echo "Stamping version data..."
+node ./scripts/stampVersion.js
+
+echo "Generating asset list for service worker..."
 node ./scripts/generateAssetList.js

@@ -1,8 +1,8 @@
 1. 3d pass
-    - add more swoop to the summon
     - release anim needed
     - one more stab at trees
 2. app/2d pass
+    - why meshes getting updated three times at start?
     - make buttons fake so iOS doesn't flip out and we can pad them
     - tap animation bad in safari; doesn't update position on resize
     - refine UI animation timings
