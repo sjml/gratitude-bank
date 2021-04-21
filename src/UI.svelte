@@ -91,7 +91,7 @@
             Gratitude
         </div>
         <div class="spacer"></div>
-        {#if headerButtonsVisible}
+        {#if headerButtonsVisible && $currentState == State.Ready}
             {#if $showSettings && modalMode == 0}
                 <div class="headerButton"
                     transition:fade

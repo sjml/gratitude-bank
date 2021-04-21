@@ -169,6 +169,7 @@
 
     .versionTag {
         opacity: 0.3;
+        text-align: right;
     }
 
     a, a:visited {
