@@ -1,6 +1,3 @@
-- share prep
-    - de-privatize repo
-
 ## Future
 - would be nice to put some glow or something on the summoned gratitude
     - shaders're fun
