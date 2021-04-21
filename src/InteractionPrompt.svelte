@@ -1,50 +1,63 @@
-<script></script>
+<script>
+    import { showTargetsSetting } from "./stores";
+    import { pd } from "./util";
 
-<div class="interaction-anim">
-    <div></div>
-    <div></div>
-</div>
+    $: {
+        if ($showTargetsSetting) {
+            pd("show targets on");
+        }
+        else {
+            pd("show targets off")
+        }
+    }
+</script>
+
+{#if $showTargetsSetting}
+    <div class="interaction-anim" on:click>
+        <div class="base"></div>
+        <div class="mover"></div>
+    </div>
+{/if}
 
 <style>
     .interaction-anim {
-        display: inline-block;
         position: relative;
-        width: 80px;
-        height: 80px;
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    .interaction-anim div {
+    .base {
         position: absolute;
-        border: 4px solid #fff;
-        opacity: 0;
+        width: 15%;
+        height: 15%;
+        background-color: white;
         border-radius: 50%;
-        animation: interaction-anim 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
     }
 
-    .interaction-anim div:nth-child(2) {
-        animation-delay: -1.4s;
+    .mover {
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        border-radius: 50%;
+        opacity: 1;
+        animation: interaction-anim 2.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
     }
 
     @keyframes interaction-anim {
         0% {
-            top: 36px;
-            left: 36px;
-            width: 0;
-            height: 0;
-            opacity: 0;
-        }
-        50% {
-            top: 36px;
-            left: 36px;
-            width: 0;
-            height: 0;
+            transform: scale(0.0);
             opacity: 1;
         }
+        90% {
+            transform: scale(1.0);
+            opacity: 0;
+        }
         100% {
-            top: 0px;
-            left: 0px;
-            width: 72px;
-            height: 72px;
+            transform: scale(1.0);
             opacity: 0;
         }
     }

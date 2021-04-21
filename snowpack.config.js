@@ -2,7 +2,7 @@
 module.exports = {
   mount: {
     public: {url: '/', static: true},
-    src: {url: '/dist'},
+    src: {url: '/build'},
   },
   plugins: [
     '@snowpack/plugin-svelte',
@@ -21,6 +21,7 @@ module.exports = {
     minify: true,
     treeshake: true,
     sourcemap: false,
+    entrypoints: ["./build/index.js"]
   },
   packageOptions: {},
   devOptions: {

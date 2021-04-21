@@ -1,14 +1,11 @@
-1. 3d pass
-    - one more stab at trees
-2. app/2d pass
-    - make buttons fake so iOS doesn't flip out and we can pad them
-    - tap animation bad in safari; doesn't update position on resize
-    - refine UI animation timings
-    - fire dies down when gratitude count is 0
+1. app/2d pass
+    - fire control:
         - affect fireLight intensity (animated), maybe the range of the movement, and the particles' emitRate, maxLifetime, and updateSpeed
-    - have fire briefly surge when log goes in
-3. share prep
+        - fire dies down when gratitude count is 0
+        - have fire briefly surge when log goes in
+2. share prep
     - social share card, icons
+    - should service-worker cache "/" or "./"? 
     - offline manifest
     - de-privatize repo
 
@@ -16,6 +13,7 @@
 - would be nice to put some glow or something on the summoned gratitude
     - shaders're fun
 - environment could be improved
+    - roots on the trees
     - tufts of grass
     - shrubs
     - critters

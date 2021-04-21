@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
+shopt -s globstar
+
 cd "$(dirname "$0")"
 cd ../public/assets
 
 rm -f *.log
 
-for bab in **/*.babylon; do
-  prettier --write --parser json $bab
-done
+prettier --write --parser json **/*.babylon

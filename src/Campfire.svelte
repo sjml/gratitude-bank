@@ -3,8 +3,9 @@
 
     import { State } from "./types";
     import {
+        hiResSetting,
         currentState, gratitudeCount,
-        woodPileRect,
+        campfireRect, woodPileRect,
         inscriptionRect, inscriptionQueue,
         summonRect, currentGratitude, summonResolution, woodPileReturnSignal } from "./stores";
     import { pd, getClientRectFromMesh, lerp } from "./util";
@@ -99,8 +100,15 @@
                                 scene.getMeshByName("AnimLogProxy") as BABYLON.Mesh,
                                 scene,
                                 renderCanvas
-                           );
+                            );
         $woodPileRect = wpRect;
+
+        const cfRect = getClientRectFromMesh(
+                                scene.getMeshByName("CampfireClickTarget") as BABYLON.Mesh,
+                                scene,
+                                renderCanvas
+                            );
+        $campfireRect = cfRect;
     }
 
     function runAnim(mesh: BABYLON.Mesh, animName: string, callback: () => void = null, reverse: boolean = false): AnimData {
@@ -250,8 +258,10 @@
 
         engine = new BABYLON.Engine(renderCanvas, true);
 
-        const pixelRatio = window.devicePixelRatio;
-        engine.setHardwareScalingLevel(1.0 / pixelRatio);
+        if ($hiResSetting) {
+            const pixelRatio = window.devicePixelRatio;
+            engine.setHardwareScalingLevel(1.0 / pixelRatio);
+        }
 
         engine.loadingScreen = new CustomLoadingScreen();
         scene = await BABYLON.SceneLoader.LoadAsync("", "./assets/campfire_set.babylon", engine);
@@ -382,7 +392,9 @@
     function handleResize() {
         if (engine !== null) {
             engine.resize();
-            updateMeshRects();
+            setTimeout(() => {
+                updateMeshRects();
+            }, 100);
         }
         var a = "../dist/assets/fire.babylon";
         a.replace(/\.\.\/dist/, ".");
@@ -409,7 +421,6 @@
         //   any orphans know the general size of the input range so this kind of backflip
         //   is a little bit better visually.
         // there is probably some clever algorithm out there that would do this better, though.
-
 
         if (maxBreaks !== 2 && maxBreaks !== 3) {
             // limited input and arbitrary text wrapping is a hard problem
@@ -644,6 +655,18 @@
         stuffText(lineBreakRes.snippets, 0.9, [0,0], ctx);
 
         summonTexture.update(true, true);
+    }
+
+    $: {
+        if ($hiResSetting && engine) {
+            pd("hi res on");
+            const pixelRatio = window.devicePixelRatio;
+            engine.setHardwareScalingLevel(1.0 / pixelRatio);
+        }
+        else if (engine) {
+            pd("hi res off");
+            engine.setHardwareScalingLevel(1.0);
+        }
     }
 
     $: if ($inscriptionQueue.length > 0) {

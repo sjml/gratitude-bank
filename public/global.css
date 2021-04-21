@@ -38,3 +38,24 @@ body {
     background-color: rgb(16, 16, 50);
     font-family: 'National Park', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+
+
+/* mix of scrollbar directives to work across browsers */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(185, 185, 185) black;
+}
+
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(185, 185, 185);
+    border-radius: 20px;
+    border: 3px solid black;
+}

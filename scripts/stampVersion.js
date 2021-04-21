@@ -1,7 +1,7 @@
 const fs = require("fs");
 const child_process = require("child_process");
 
-const buildFile = "./dist/dist/index.js";
+const buildFile = "./dist/build/index.js";
 
 
 const latestCommit = child_process.execSync("git rev-parse --short HEAD").toString().trim();
@@ -14,4 +14,4 @@ const inputString = fs.readFileSync(buildFile).toString();
 const outputString = inputString.replace("#GRATITUDE_VERSION_STRING#", versionString);
 
 fs.writeFileSync(buildFile, outputString);
-fs.writeFileSync("./dist/VERSION", versionString);
+fs.writeFileSync("./dist/VERSION", versionString)
