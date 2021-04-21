@@ -1,7 +1,7 @@
 const fs = require("fs");
 const child_process = require("child_process");
 
-const buildFile = "./dist/build/index.js";
+const buildFile = "./dist/dist/index.js";
 
 
 const latestCommit = child_process.execSync("git rev-parse --short HEAD").toString().trim();

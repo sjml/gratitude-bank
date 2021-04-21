@@ -10,7 +10,11 @@
                 isOn={$hiResSetting}
                 on:click={() => $hiResSetting = !$hiResSetting}
             />
-            <div class="name">High Resolution</div>
+            <div class="name"
+                on:click={() => $hiResSetting = !$hiResSetting}
+            >
+                High Resolution
+            </div>
         </div>
         <div class="explanation">
             Uses every pixel on your screen to render the campfire and
@@ -24,7 +28,11 @@
                 isOn={$showTargetsSetting}
                 on:click={() => $showTargetsSetting = !$showTargetsSetting}
             />
-            <div class="name">Show Interaction Prompts</div>
+            <div class="name"
+                on:click={() => $showTargetsSetting = !$showTargetsSetting}
+            >
+                Show Interaction Prompts
+            </div>
         </div>
         <div class="explanation">
             Shows the prompts for where you can touch or click to interact
@@ -51,6 +59,11 @@
 
         display: flex;
         flex-direction: column;
+        -webkit-user-select: none;
+         -khtml-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
     }
 
     .settingRow {
@@ -63,6 +76,7 @@
 
     .settingRow .name {
         margin-left: 20px;
+
 
         font-weight: bold;
         font-size: 130%;

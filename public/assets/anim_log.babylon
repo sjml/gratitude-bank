@@ -6,7 +6,6 @@
     "file": "anim_log.babylon"
   },
   "autoClear": true,
-  "clearColor": [0.0509, 0.0509, 0.0509],
   "gravity": [0, -9.81, 0],
   "materials": [
     {

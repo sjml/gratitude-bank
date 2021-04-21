@@ -17,8 +17,8 @@ else {
     window.addEventListener('load', () => {
       navigator.serviceWorker
         .register('./service-worker.js')
-        .then(res => {/* console.log("registered service worker!"); */})
-        .catch(err => {/* console.log("problem with service worker", err); */})
+        .then((res) => {/* console.log("registered service worker!"); */})
+        .catch((err) => {/* console.log("problem with service worker", err); */})
     });
   }
 }
