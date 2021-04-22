@@ -81,6 +81,11 @@
 </script>
 
 <div class="ui-layer" class:blocking={modalMode > 0}>
+    {#if !headerButtonsVisible}
+        <div class="fontLoader unselectable">
+            because αγαπη
+        </div>
+    {/if}
     <div class="header"
         class:modalUp={modalMode > 0}
     >
@@ -208,6 +213,14 @@
            -moz-user-select: none;
             -ms-user-select: none;
                 user-select: none;
+    }
+
+    .fontLoader {
+        font-family: 'Open Sans Condensed Greek', 'Open Sans Condensed';
+        position: fixed;
+        top: 0;
+        left: 0;
+        color: rgb(16, 16, 50, 0.1);
     }
 
     .header {

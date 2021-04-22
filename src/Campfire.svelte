@@ -634,7 +634,7 @@
     }
 
     function setSummonDisplay(inputString: string) {
-        const format = "bold #FONTSIZE#px 'Amatic_SC', sans-serif";
+        const format = "bold #FONTSIZE#px 'Open Sans Condensed Greek', 'Amatic_SC', 'Open Sans Condensed', sans-serif";
         const ctx = summonTexture.getContext();
         ctx.clearRect(0, 0, summonTextureDimensions.width, summonTextureDimensions.height);
 

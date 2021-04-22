@@ -30,6 +30,49 @@
     font-style: normal;
 }
 
+/*
+    Don't let Amatic try to take any Greek characters; specify Open Sans as something
+    specifically Greek, even though it's just the same file as the rest. (The magic is
+    in the order of fallbacks.)
+*/
+@font-face {
+    font-family: 'Open Sans Condensed Greek';
+    src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
+         url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+0370-03FF;
+}
+
+/*
+    *also* specify the same file as the font's "bold" weight so browser's don't do
+    weird things trying to do a cheap bolding on it
+ */
+@font-face {
+    font-family: 'Open Sans Condensed Greek';
+    src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
+         url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    unicode-range: U+0370-03FF;
+}
+
+@font-face {
+    font-family: 'Open Sans Condensed';
+    src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
+         url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Open Sans Condensed';
+    src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
+         url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
 html, body {
     margin: 0;
 }
@@ -37,6 +80,7 @@ html, body {
 body {
     background-color: rgb(16, 16, 50);
     font-family: 'National Park', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    touch-action: none;
 }
 
 

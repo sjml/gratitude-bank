@@ -8,7 +8,7 @@ export type Gratitude = {
     timesSeen: number,
 };
 
-function _getGratitudeList() : Gratitude[] {
+export function getGratitudeList() : Gratitude[] {
     const gratitudeStr = localStorage.getItem("gratitude_storage_v1");
     let gratitude = [];
     if (gratitudeStr !== null) {
@@ -18,7 +18,7 @@ function _getGratitudeList() : Gratitude[] {
 }
 
 export function storeGratitude(text: string) {
-    const gratitude = _getGratitudeList();
+    const gratitude = getGratitudeList();
 
     const existingIdx = gratitude.findIndex(o => o.text == text);
     if (existingIdx == -1) {
@@ -35,7 +35,7 @@ export function storeGratitude(text: string) {
 }
 
 export function recallGratitude() : Gratitude {
-    const gratitude = _getGratitudeList();
+    const gratitude = getGratitudeList();
 
     // for now just sorting by least recently seen; can get more clever later
     gratitude.sort((a,b) => {
@@ -79,7 +79,7 @@ export function recallGratitude() : Gratitude {
 }
 
 export function releaseGratitude(text: string) {
-    let gratitude = _getGratitudeList();
+    let gratitude = getGratitudeList();
 
     gratitude = gratitude.filter((g) => g.text != text);
 
@@ -89,6 +89,6 @@ export function releaseGratitude(text: string) {
 }
 
 export function getGratitudeCount() {
-    const gratitude = _getGratitudeList();
+    const gratitude = getGratitudeList();
     return gratitude.length;
 }

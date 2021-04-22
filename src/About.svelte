@@ -11,7 +11,7 @@
     function getVersion() {
         // truncated to make find/replace simpler in the build process :D
         if (versionString.startsWith("#GRATITUDE_VERSION_STRING")) {
-            return "(dev)";
+            return "[dev]";
         }
         else {
             return `version ${versionString}`;

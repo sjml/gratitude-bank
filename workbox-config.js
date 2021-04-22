@@ -3,6 +3,7 @@ module.exports = {
   globPatterns: [
       "**/*.{babylon,png,fx,css,js,woff,woff2,txt,webmanifest,ico,html,md}",
   ],
+  cacheId: "gratitude_",
   maximumFileSizeToCacheInBytes: 10e7,
   ignoreURLParametersMatching: [/^utm_/, /^fbclid$/],
   directoryIndex: "index.html",
