@@ -331,6 +331,7 @@
         font-family: inherit;
         text-shadow: 0px 0px 8px black;
         pointer-events: all;
+        cursor: default;
         opacity: 1;
 
         transition-property: opacity;

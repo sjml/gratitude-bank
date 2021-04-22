@@ -52,7 +52,7 @@ async function main() {
     }
     assets[entryName] = hash;
   }
-  assets["/"] = assets["index.html"];
+  assets["/projects/gratitude/"] = assets["index.html"];
 
   const template = fs.readFileSync(templateFile).toString("utf-8");
   const before = template.substr(0, template.indexOf(startSentinel));

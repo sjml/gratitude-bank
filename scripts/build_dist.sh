@@ -25,5 +25,5 @@ done
 echo "Stamping version data..."
 node ./scripts/stampVersion.js
 
-echo "Generating asset list for service worker..."
-node ./scripts/generateAssetList.js
+echo "Generating service worker..."
+npx workbox generateSW workbox-config.js
