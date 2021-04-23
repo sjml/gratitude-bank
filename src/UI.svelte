@@ -3,7 +3,6 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from "svelte";
     import { fade } from "svelte/transition";
 
     import { State } from "./types";
@@ -14,7 +13,7 @@
         inscriptionRect, inscriptionQueue,
         summonRect, currentGratitude, summonResolution, gratitudeCount, woodPileReturnSignal, campfireRect
     } from "./stores";
-    import { storeGratitude, releaseGratitude, getGratitudeCount } from "./gratitude";
+    import { storeGratitude, releaseGratitude } from "./gratitude";
     import About from "./About.svelte";
     import Settings from "./Settings.svelte";
     import InteractionPrompt from "./InteractionPrompt.svelte";
@@ -23,14 +22,12 @@
     let introRunning = true;
     let headerButtonsVisible = false;
 
-    onMount(() => {
-        setTimeout(() => {
-            introRunning = false;
-        }, 800);
+    $: if (introRunning && $currentState != State.Preload) {
+        introRunning = false;
         setTimeout(() => {
             headerButtonsVisible = true;
         }, 3500);
-    });
+    }
 
 
     let inputBox: HTMLInputElement = null;
@@ -270,9 +267,7 @@
     }
     .title.intro {
         font-size: 100px;
-        transform:
-            translateX(calc(50vw - 50%))
-            translateY(calc(50vh - 50%));
+        transform: translate3d(calc(50vw - 50%), calc(50vh - 50%), 0);
     }
     .header.modalUp .title {
         opacity: 0.0;

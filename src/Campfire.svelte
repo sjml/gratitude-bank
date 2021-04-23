@@ -159,8 +159,8 @@
         // handle state transitions
         if ($currentState == State.Ready) {
             // reset displays
-            setInscription("");
-            setSummonDisplay("");
+            await setInscription("");
+            await setSummonDisplay("");
             summonAnimData = null;
 
             // make sure anim log is in place
@@ -222,7 +222,7 @@
         else if ($currentState == State.Summoning) {
             $currentGratitude = recallGratitude();
 
-            setSummonDisplay($currentGratitude.text);
+            await setSummonDisplay($currentGratitude.text);
 
             summonAnimData = runAnim(summonDisplay, "SummonBaked", () => setState(State.Remembering));
         }
@@ -439,10 +439,10 @@
             return {fontSize: baseFontSize, snippets: [inputString]};
         }
 
-        let matches = inputString.matchAll(/\s/g);
+        let matches = inputString.matchAll(/[\s-—\.;/]/g);
         let breaks: {[key: string]: number} = {};
         for (const match of matches) {
-            breaks[String(match.index)] = Math.abs((inputString.length / 2) - match.index);
+            breaks[String(match.index)] = Math.abs(Math.floor(inputString.length / 2) - match.index);
         }
 
         let line1: string = "";
@@ -456,7 +456,7 @@
             // ok let's just just try splitting it in two
             const middle = Math.floor(inputString.length / 2);
             line1 = inputString.substring(0, middle).trim();
-            line2 = inputString.substring(middle+1).trim();
+            line2 = inputString.substring(middle).trim();
 
             ctx.font = formatString.replace("#FONTSIZE#", (baseFontSize / 2).toFixed(0));
             const w1 = ctx.measureText(line1).width;
@@ -469,18 +469,21 @@
             // try for thirds and hope for the best
             const third = Math.floor(inputString.length / 3);
             line1 = inputString.substring(0, third).trim();
-            line2 = inputString.substring(third+1, third*2);
-            line3 = inputString.substring((third*2)+1);
+            line2 = inputString.substring(third, third*2);
+            line3 = inputString.substring(third*2);
             return {fontSize: baseFontSize / 3, snippets: [line1 + "-", line2 + "-", line3]};
         }
 
         // find the space closest to the center of the line
         const breakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
         let breakIdx = parseInt(breakStr);
+        if (inputString.charAt(breakIdx).trim() !== "") {
+            breakIdx += 1;
+        }
 
         // split it at that point
         line1 = inputString.substring(0, breakIdx).trim();
-        line2 = inputString.substring(breakIdx+1).trim();
+        line2 = inputString.substring(breakIdx).trim();
 
         if (maxBreaks == 2) {
             return {fontSize: baseFontSize / 2, snippets: [line1, line2]};
@@ -495,12 +498,12 @@
         }
 
         // we tried 2 lines, but they're still too wide; we're allowed 3 so let's do it
-        matches = inputString.matchAll(/\s/g);
+        matches = inputString.matchAll(/[\s-—\.;/]/g);
         const thirdBreaks: {[key: string]: number} = {};
         const twoThirdBreaks: {[key: string]: number} = {};
         for (const match of matches) {
-            thirdBreaks[String(match.index)] = Math.abs((inputString.length / 3) - match.index);
-            twoThirdBreaks[String(match.index)] = Math.abs((inputString.length / 3 * 2) - match.index);
+            thirdBreaks[String(match.index)] = Math.abs(Math.floor(inputString.length / 3) - match.index);
+            twoThirdBreaks[String(match.index)] = Math.abs((Math.floor(inputString.length / 3) * 2) - match.index);
         }
         // closest break to 1/3
         const earlyBreakStr = Object.keys(thirdBreaks).reduce((a, b) => thirdBreaks[a] < thirdBreaks[b] ? a : b);
@@ -513,47 +516,59 @@
         if (earlyBreakDist <= lateBreakDist) {
             // break at the first third
             breakIdx = parseInt(earlyBreakStr);
+            if (inputString.charAt(breakIdx).trim() !== "") {
+                breakIdx += 1;
+            }
             line1 = inputString.substring(0, breakIdx).trim();
-            line2 = inputString.substring(breakIdx+1).trim();
+            line2 = inputString.substring(breakIdx).trim();
 
             // break remainder in half
-            matches = line2.matchAll(/\s/g);
+            matches = line2.matchAll(/[\s-—\.;/]/g);
             breaks = {};
             for (const match of matches) {
-                breaks[String(match.index)] = Math.abs((line2.length / 2) - match.index);
+                breaks[String(match.index)] = Math.abs((Math.floor(line2.length / 2)) - match.index);
             }
             if (Object.keys(breaks).length == 0) {
-                line3 = line2.substring((line2.length / 2)+1).trim();
-                line2 = line2.substring(0, line2.length / 2).trim() + "-";
+                line3 = line2.substring(Math.floor(line2.length / 2)).trim();
+                line2 = line2.substring(0, Math.floor(line2.length / 2)).trim() + "-";
             }
             else {
                 let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
                 let remBreakIdx = parseInt(remBreakStr);
-                line3 = line2.substring(remBreakIdx+1).trim();
+                if (line2.charAt(remBreakIdx).trim() !== "") {
+                    remBreakIdx += 1;
+                }
+                line3 = line2.substring(remBreakIdx).trim();
                 line2 = line2.substring(0, remBreakIdx).trim();
             }
         }
         else {
             // break at the last third
             breakIdx = parseInt(lateBreakStr);
+            if (inputString.charAt(breakIdx).trim() !== "") {
+                breakIdx += 1;
+            }
             line1 = inputString.substring(0, breakIdx).trim();
-            line2 = inputString.substring(breakIdx+1).trim();
+            line2 = inputString.substring(breakIdx).trim();
             line3 = line2;
 
             // break remainder in half
-            matches = line1.matchAll(/\s/g);
+            matches = line1.matchAll(/[\s-—\.;/]/g);
             breaks = {};
             for (const match of matches) {
-                breaks[String(match.index)] = Math.abs((line1.length / 2) - match.index);
+                breaks[String(match.index)] = Math.abs(Math.floor(line1.length / 2) - match.index);
             }
             if (Object.keys(breaks).length == 0) {
-                line2 = line1.substring((line1.length / 2)+1).trim();
-                line1 = line1.substring(0, line1.length / 2).trim();
+                line2 = line1.substring(Math.floor(line1.length / 2)).trim();
+                line1 = line1.substring(0, Math.floor(line1.length / 2)).trim();
             }
             else {
                 let remBreakStr = Object.keys(breaks).reduce((a, b) => breaks[a] < breaks[b] ? a : b);
                 let remBreakIdx = parseInt(remBreakStr);
-                line2 = line1.substring(remBreakIdx+1).trim();
+                if (line1.charAt(remBreakIdx).trim() !== "") {
+                    remBreakIdx += 1;
+                }
+                line2 = line1.substring(remBreakIdx).trim();
                 line1 = line1.substring(0, remBreakIdx).trim();
             }
         }
@@ -608,7 +623,7 @@
         }
     }
 
-    function setInscription(inputString: string) {
+    async function setInscription(inputString: string) {
         const format = "#FONTSIZE#px 'National Park', sans-serif";
         const ctx = inscriptionTexture.getContext();
         ctx.fillStyle = inscriptionBaseColor.toHexString();
@@ -628,13 +643,15 @@
         ctx.fillStyle = "black";
         ctx.font = format.replace("#FONTSIZE#", lineBreakRes.fontSize.toFixed(0));
 
+        await document.fonts.load(ctx.font);
         stuffText(lineBreakRes.snippets, 0.8, [0,15], ctx);
 
         inscriptionTexture.update();
     }
 
-    function setSummonDisplay(inputString: string) {
-        const format = "bold #FONTSIZE#px 'Open Sans Condensed Greek', 'Amatic_SC', 'Open Sans Condensed', sans-serif";
+    async function setSummonDisplay(inputString: string) {
+        const format = "#FONTSIZE#px 'Open Sans Condensed Greek', 'Amatic_SC_Bold', 'Open Sans Condensed', sans-serif";
+
         const ctx = summonTexture.getContext();
         ctx.clearRect(0, 0, summonTextureDimensions.width, summonTextureDimensions.height);
 
@@ -652,6 +669,7 @@
         ctx.fillStyle = "white";
         ctx.font = format.replace("#FONTSIZE#", lineBreakRes.fontSize.toFixed(0));
 
+        await document.fonts.load(ctx.font);
         stuffText(lineBreakRes.snippets, 0.9, [0,0], ctx);
 
         summonTexture.update(true, true);
@@ -673,10 +691,10 @@
         // not actually treating as a queue for now
         const inscription = $inscriptionQueue[0];
 
-        setInscription(inscription);
-        setState(State.Contemplating);
-
-        $inscriptionQueue = [];
+        setInscription(inscription).then(() => {
+            setState(State.Contemplating);
+            $inscriptionQueue = [];
+        });
     }
 
     // HACKHACK

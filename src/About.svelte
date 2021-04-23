@@ -17,6 +17,16 @@
             return `version ${versionString}`;
         }
     }
+
+    function scrollToSaving() {
+        // don't want the URL to get messy
+        const tgtAnchor = document.getElementById("saving-your-gratitude");
+        tgtAnchor.scrollIntoView({
+            behavior: "smooth",
+            block:"center"
+        });
+        window.scrollTo(0, 0);
+    }
 </script>
 
 <div class="about">
@@ -35,6 +45,11 @@
         you of the things in your life which draw you towards it. It only puts out
         what you put into it — think of it as a storehouse for your own experiences of
         gratitude.
+    </p>
+    <p>
+        Note that you can add this page to your phone’s home screen and treat it like
+        a regular application! See the section below on <span class="inner-link" on:click={scrollToSaving}>
+        saving your gratitude</span> for details.
     </p>
     <p>
         Let me know what you think of it, especially if you like it or end up using it! The
@@ -97,20 +112,29 @@
 
     <h2 id="privacy">Privacy</h2>
     <p>
-        No information ever leaves your computer or phone. There’s no login necessary because
-        nothing is stored on any servers. I don’t need (nor do I want) to see what you are
-        grateful for; that’s between you and the fire.
+        No information from this page ever leaves your computer or phone. There’s no login
+        necessary because nothing is stored on any servers. I don’t need (nor do I want) to
+        see what you are grateful for; that’s between you and the fire.
     </p>
+
+    <h2 id="saving-your-gratitude">Saving Your Gratitude</h2>
     <p>
-        The downside of that, though, is that I store the items locally on your browser. That
-        means that if you clear the site data (or don’t visit for a while), it may lose your
-        stored gratitude. That could make you sad, and that’s the last thing I want!
+        The downside of not storing your data on a server, though, is that it’s instead
+        stored locally on your browser or phone. That means that if you clear the site data
+        (or don’t visit for a while), it may lose your stored gratitude. That could make you
+        sad, and that’s the last thing I want!
     </p>
     <p>
         The way to avoid that problem is to add this page to the home screen of your phone. On
         iOS, tap the “Share” button (the little box with the arrow coming up) and select
         “Add to Home Screen.” On Android, tap the menu icon (the three dots at the top right)
-        and choose “Add to Home screen.” It should work happily even when you are offline.
+        and choose “Add to Home screen.” It should work happily even when you are offline, just
+        like a normal app.
+    </p>
+    <p>
+        (On a computer, browsers other than Safari should hold onto the data indefinitely, so
+        you’re safe as long as you use Firefox/Chrome/Edge/Brave/etc. and do not intentionally
+        clear the data.)
     </p>
 
     <h2 id="source">Source Code</h2>
@@ -142,6 +166,12 @@
     .about {
         padding: 25px 10px 25px 25px;
         overflow-y: scroll;
+        scroll-behavior: smooth;
+    }
+
+    .inner-link {
+        text-decoration: underline;
+        cursor: pointer;
     }
 
     h1 {

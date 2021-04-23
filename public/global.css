@@ -31,6 +31,18 @@
 }
 
 /*
+    Loading it as a "normal" font-face so it can get specified for the summon
+    canvas and the fallbacks and be normal.
+ */
+@font-face {
+    font-family: 'Amatic_SC_Bold';
+    src: url('./fonts/Amatic_SC/AmaticSC-Bold.woff2') format('woff2'),
+         url('./fonts/Amatic_SC/AmaticSC-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*
     Don't let Amatic try to take any Greek characters; specify Open Sans as something
     specifically Greek, even though it's just the same file as the rest. (The magic is
     in the order of fallbacks.)
@@ -40,19 +52,6 @@
     src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
          url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
     font-weight: normal;
-    font-style: normal;
-    unicode-range: U+0370-03FF;
-}
-
-/*
-    *also* specify the same file as the font's "bold" weight so browser's don't do
-    weird things trying to do a cheap bolding on it
- */
-@font-face {
-    font-family: 'Open Sans Condensed Greek';
-    src: url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff2') format('woff2'),
-         url('./fonts/Open_Sans_Condensed/OpenSansCondensed-Light.woff') format('woff');
-    font-weight: bold;
     font-style: normal;
     unicode-range: U+0370-03FF;
 }
