@@ -573,7 +573,7 @@
             }
         }
 
-        return {fontSize: baseFontSize / 3, snippets: [line1, line2, line3]};
+        return {fontSize: baseFontSize / 2.5, snippets: [line1, line2, line3]};
     }
 
     function stuffText(snippets: string[],
@@ -608,13 +608,13 @@
         else if (snippets.length == 3) {
             ctx.fillText(snippets[0],
                 origin.x,
-                origin.y - (lineHeight * spacerSize * 1.5),
+                origin.y - (lineHeight * spacerSize * 1.8),
                 maxWidth
             );
             ctx.fillText(snippets[1], origin.x, origin.y, maxWidth);
             ctx.fillText(snippets[2],
                 origin.x,
-                origin.y + (lineHeight * spacerSize * 1.5),
+                origin.y + (lineHeight * spacerSize * 1.8),
                 maxWidth
             );
         }
