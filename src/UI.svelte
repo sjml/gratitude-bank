@@ -91,6 +91,9 @@
             transition:fade|local
         >
             Gratitude
+            {#if $currentState == State.Preload}
+                <div class="loader" out:fade>(loading)</div>
+            {/if}
         </div>
         <div class="spacer"></div>
         {#if headerButtonsVisible && $currentState == State.Ready}
@@ -218,6 +221,25 @@
         top: 0;
         left: 0;
         color: rgb(16, 16, 50, 0.1);
+    }
+
+    .loader {
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        font-size: 30px;
+        animation: loader-anim 2.5s ease-in-out infinite;
+    }
+    @keyframes loader-anim {
+        0% {
+            opacity: 0.0;
+        }
+        50% {
+            opacity: 0.3;
+        }
+        100% {
+            opacity: 0.0;
+        }
     }
 
     .header {

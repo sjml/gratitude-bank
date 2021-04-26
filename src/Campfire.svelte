@@ -8,7 +8,7 @@
         campfireRect, woodPileRect,
         inscriptionRect, inscriptionQueue,
         summonRect, currentGratitude, summonResolution, woodPileReturnSignal } from "./stores";
-    import { pd, getClientRectFromMesh, lerp } from "./util";
+    import { pd } from "./util";
     import { getGratitudeCount, recallGratitude } from "./gratitude";
 
     // Snowpack's tree-shaking is good enough that we can get
@@ -77,6 +77,37 @@
                 tgtMesh.actionManager = null;
             }
         }
+    }
+
+    function getClientRectFromMesh(mesh: BABYLON.Mesh, scene: BABYLON.Scene, canvas: HTMLCanvasElement): ClientRect {
+        const meshVectors = mesh.getBoundingInfo().boundingBox.vectors;
+
+        const worldMatrix = mesh.getWorldMatrix();
+        const transformMatrix = scene.getTransformMatrix();
+        const viewport = scene.activeCamera!.viewport;
+
+        const coordinates = meshVectors.map(v => {
+            const proj = BABYLON.Vector3.Project(v, worldMatrix, transformMatrix, viewport);
+            proj.x = proj.x * canvas.clientWidth;
+            proj.y = proj.y * canvas.clientHeight;
+            return proj;
+        });
+
+        const minX = Math.min(...coordinates.map(c => c.x));
+        const maxX = Math.max(...coordinates.map(c => c.x));
+        const minY = Math.min(...coordinates.map(c => c.y));
+        const maxY = Math.max(...coordinates.map(c => c.y));
+
+        const rect: ClientRect = {
+            width: maxX - minX,
+            height: maxY - minY,
+            left: minX,
+            top: minY,
+            right: maxX,
+            bottom: maxY,
+        }
+
+        return rect;
     }
 
     function updateMeshRects() {
@@ -396,8 +427,6 @@
                 updateMeshRects();
             }, 100);
         }
-        var a = "../dist/assets/fire.babylon";
-        a.replace(/\.\.\/dist/, ".");
     }
 
     onMount(() => {

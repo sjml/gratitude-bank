@@ -1,10 +1,15 @@
 <script lang="ts">
     import UI from "./UI.svelte";
-    import Campfire from "./Campfire.svelte";
+
+    let Campfire: any;
+    import("./Campfire.svelte").then(res => Campfire = res.default);
 </script>
 
 <UI/>
-<Campfire/>
+
+{#if Campfire}
+    <svelte:component this={Campfire}/>
+{/if}
 
 <style>
 </style>
