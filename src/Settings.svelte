@@ -6,7 +6,15 @@
     let copying = false;
     function copyData() {
         const gratData = getGratitudeList();
-        navigator.clipboard.writeText(JSON.stringify(gratData, null, 2));
+        const gratDataOut = gratData.map((gd) => {
+            return {
+                text: gd.text,
+                storedOn: new Date(gd.storedOn).toISOString(),
+                lastSeen: gd.lastSeen == null ? gd.lastSeen : new Date(gd.lastSeen).toISOString(),
+                timesSeen: gd.timesSeen,
+            }
+        });
+        navigator.clipboard.writeText(JSON.stringify(gratDataOut, null, 2));
         copying = true;
         setTimeout(() => {
             copying = false;
