@@ -20,6 +20,14 @@
             copying = false;
         }, 500);
     }
+
+    function summonShare() {
+        navigator.share({
+            title: "Gratitude Bank",
+            text: "A small tool to help you remember things that inspire gratitude, so you can recall them later when you need to. Created by Shane Liesegang, SJ. https://shaneliesegang.com/projects/gratitude",
+            url: "https://shaneliesegang.com/projects/gratitude"
+        });
+    }
 </script>
 
 <div class="settings">
@@ -59,9 +67,22 @@
             works, but might be distracting once you know.
         </div>
     </div>
+    {#if navigator.share}
+    <div class="setting">
+        <div class="clickAction"
+            on:click={summonShare}
+        >
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"></rect><polyline points="86 58 128 16 170 58" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></polyline><line x1="128" y1="128" x2="128" y2="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line><path d="M176,96h24a8,8,0,0,1,8,8V208a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V104a8,8,0,0,1,8-8H80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></path></svg>            </div>
+            <div class="explanation">
+                Click or tap here to share this tool with someone else who might like it.
+            </div>
+        </div>
+    </div>
+    {/if}
     {#if navigator.clipboard && $gratitudeCount > 0}
     <div class="setting">
-        <div class="copyAction"
+        <div class="clickAction"
             on:click={copyData}
         >
             <div class="icon">
@@ -123,7 +144,7 @@
         margin: 5px 10px;
     }
 
-    .copyAction {
+    .clickAction {
         margin-right: 20px;
         width: 75%;
         margin: 0 auto;
@@ -133,7 +154,7 @@
         align-items: center;
     }
 
-    .copyAction .icon {
+    .clickAction .icon {
         min-width: 40px;
         max-width: 40px;
     }
