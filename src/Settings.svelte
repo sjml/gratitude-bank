@@ -25,7 +25,7 @@
         navigator.share({
             title: "Gratitude Bank",
             text: "A small tool to help you remember things that inspire gratitude, so you can recall them later when you need to. Created by Shane Liesegang, SJ. https://shaneliesegang.com/projects/gratitude",
-            url: "https://shaneliesegang.com/projects/gratitude"
+            // url: "https://shaneliesegang.com/projects/gratitude"
         });
     }
 </script>
