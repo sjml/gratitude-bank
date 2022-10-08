@@ -8,8 +8,8 @@
 
 @font-face {
     font-family: 'National Park';
-    src: url('./fonts/NationalPark/NationalPark-Heavy.woff2') format('woff2'),
-         url('./fonts/NationalPark/NationalPark-Heavy.woff') format('woff');
+    src: url('./fonts/NationalPark/NationalPark-SemiBold.woff2') format('woff2'),
+         url('./fonts/NationalPark/NationalPark-SemiBold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
