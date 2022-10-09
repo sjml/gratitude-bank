@@ -653,7 +653,7 @@
     }
 
     async function setInscription(inputString: string) {
-        const format = "#FONTSIZE#px 'National Park', sans-serif";
+        const format = "#FONTSIZE#px 'National Park', 'FiraGO Arabic', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif";
         const ctx = inscriptionTexture.getContext();
         ctx.fillStyle = inscriptionBaseColor.toHexString();
         ctx.fillRect(0, 0, inscriptionTextureDimensions.width, inscriptionTextureDimensions.height);

@@ -146,10 +146,12 @@
     <p>
         It uses <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>,
         <a href="https://svelte.dev" target="_blank">Svelte</a>, and
-        <a href="https://www.snowpack.dev/" target="_blank">Snowpack</a>. The fonts are
-        <a href="https://nationalparktypeface.com/" target="_blank">National Park Typeface</a>
-        and <a href="https://fonts.google.com/specimen/Amatic+SC#standard-styles"
-        target="_blank">Amatic SC</a>. The user interface uses <a href="https://phosphoricons.com/"
+        <a href="https://www.snowpack.dev/" target="_blank">Snowpack</a>. The main fonts are
+        <a href="https://nationalparktypeface.com/" target="_blank">National Park</a>
+        and <a href="https://fonts.google.com/specimen/Amatic+SC" target="_blank">Amatic SC</a>,
+        with some <a href="https://www.opensans.com/" target="_blank">Open Sans</a> and
+        <a href="https://bboxtype.com/typefaces/FiraGO/" target="_blank">FiraGO</a> in
+        occasional spots. The user interface uses <a href="https://phosphoricons.com/"
         target="_blank">Phosphor Icons</a>.
     </p>
 

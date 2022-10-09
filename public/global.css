@@ -14,6 +14,16 @@
     font-style: normal;
 }
 
+/* a better looking Arabic */
+@font-face {
+    font-family: 'FiraGO Arabic';
+    src: url('./fonts/FiraGO/FiraGO-Book.woff2') format('woff2'),
+         url('./fonts/FiraGO/FiraGO-Book.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+0600-06FF;
+}
+
 @font-face {
     font-family: 'Amatic_SC';
     src: url('./fonts/Amatic_SC/AmaticSC-Regular.woff2') format('woff2'),
@@ -78,7 +88,7 @@ html, body {
 
 body {
     background-color: rgb(16, 16, 50);
-    font-family: 'National Park', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'National Park', 'FiraGO Arabic', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     touch-action: none;
 }
 
